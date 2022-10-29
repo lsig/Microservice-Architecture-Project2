@@ -7,10 +7,10 @@ merchant_database = client.merchant_list
 collection = merchant_database.merchants
 
 async def fetch_merchant(id: int): 
-    document = await collection.find_merchant({"id":id})
+    document = await collection.find_one({"id":id})
     return document
 
 async def create_merchant(merchant: MerchantModel):
     document = merchant
-    result = await collection.insert_merchant(document)
+    result = await collection.insert_one(document)
     return result

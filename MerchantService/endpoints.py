@@ -10,7 +10,6 @@ from infrastructure.container import Container
 
 router = APIRouter()
 
-
 @router.get('/merchants/{id}', status_code=200, response_model=MerchantModel)
 @inject
 async def get_message(id: int):
