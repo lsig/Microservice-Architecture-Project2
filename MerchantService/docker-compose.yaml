@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  merchant-api:
+    build: .
+    ports:
+      - "8001:8001"
+
+    image: merchant_api:1.14
+    depends_on:
+      - mongodb_container
+
+
+  mongodb_container:
+    image: mongo:latest
+    environment:
+        MONGO_INITDB_ROOT_USERNAME: root
+        MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    ports:
+        - "27017:27017"
+    volumes:
+        - mongodb_data_container:/data/db
+
+volumes:
+  mongodb_data_container:

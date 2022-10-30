@@ -1,28 +1,30 @@
-from http.client import HTTPException
-from tokenize import String
-from urllib import response
-from dependency_injector.wiring import inject, Provide
-from fastapi import APIRouter, Depends
-
-from models.merchant_model import MerchantModel
-from database import fetch_merchant, create_merchant
 from infrastructure.container import Container
+from models.merchant_model import MerchantModel
+from fastapi import APIRouter, HTTPException, Depends
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
+from dependency_injector.wiring import inject, Provide
+from merchant_repository import MerchantRepository
 
 router = APIRouter()
 
 @router.get('/merchants/{id}', status_code=200, response_model=MerchantModel)
 @inject
-async def get_message(id: int):
-    response = await fetch_merchant(id)
-    if response:
-        return response
-    raise HTTPException(404, f"There is no merchant with this id {id}")
+async def get_merchant(id: str, merchant_repository: MerchantRepository = Depends(
+    Provide[Container.merchant_repository_provider])):
+    merchant = await merchant_repository.fetch_merchant(id)
+    if merchant:
+        return merchant
+    raise HTTPException(status_code=404, detail=f"There is no merchant with id: {id}")
 
 
-@router.post('/merchants', status_code=201, response_model=MerchantModel)
+@router.post('/merchants', response_model=MerchantModel)
 @inject
-async def save_messages(merchant: MerchantModel):
-    response = await create_merchant(merchant.dict())
-    if response:
-        return response
+async def save_merchant(merchant: MerchantModel, 
+                        merchant_repository: MerchantRepository = Depends(
+                        Provide[Container.merchant_repository_provider])):
+    merchant = jsonable_encoder(merchant)
+    new_merchant = await merchant_repository.post_merchant(merchant=merchant)
+    if new_merchant:
+        return JSONResponse(status_code=201, content=merchant["_id"])
     raise HTTPException(400, "Bad request")
