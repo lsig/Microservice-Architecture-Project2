@@ -1,0 +1,28 @@
+version: "3.8"
+  
+services:
+  db:
+    image: postgres:15.0-alpine
+    restart: always
+    environment:
+      POSTGRES_HOST: host.docker.internal
+      POSTGRES_DATABASE: orders_schema
+      POSTGRES_USER: orders_user
+      POSTGRES_PASSWORD: order_pw
+
+
+    volumes: 
+      - data_storage:/data/db
+    ports:
+      - 5432:5432
+
+  # order_api:
+  #   build: .
+  #   image: order_api:0.0.0
+  #   restart: always
+  #   ports:
+  #     - 8000:8000
+    
+
+volumes:
+  data_storage:
