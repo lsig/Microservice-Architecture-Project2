@@ -2,6 +2,7 @@ import os
 import psycopg2
 
 from db_connection.db_config import DbConfig
+from db_connection.db_connection import DbConnection
 
 class PostgresDbConnection(DbConnection):
     def __init__(self, db_config: DbConfig) -> None:

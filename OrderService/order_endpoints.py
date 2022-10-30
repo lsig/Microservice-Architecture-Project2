@@ -8,14 +8,13 @@ from order_service import OrderService
 
 router = APIRouter()
 
-order_service: OrderService = Depends(Provide[Container.order_service_provider])
-
 @router.get('/Order', status_code=200)
-async def get_order():
+@inject
+async def get_order(order_service: OrderService = Depends(Provide[Container.order_service_provider])):
     return "message recieved"
 
 
 @router.post('/orders', status_code=201)
 @inject
-async def post_order(order: OrderModel):
+async def post_order(order: OrderModel, order_service: OrderService = Depends(Provide[Container.order_service_provider])):
     return order_service.post_order(order)
