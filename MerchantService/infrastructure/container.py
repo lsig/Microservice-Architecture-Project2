@@ -20,8 +20,6 @@ class Container(containers.DeclarativeContainer):
         MongoDbConnection,
         db_config=db_config
     )
-    print(db_connection)
-    print(db_config)
 
     merchant_repository_provider = providers.Factory(
         MerchantRepository,

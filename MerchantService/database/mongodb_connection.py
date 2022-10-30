@@ -11,6 +11,5 @@ class MongoDbConnection(DbConnection):
                 username=db_config.user,
                 password=db_config.password
             )
-        print(client)
         merchant_database = client.merchant_list
         self.collection = merchant_database.merchants
