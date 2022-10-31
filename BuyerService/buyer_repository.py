@@ -11,5 +11,6 @@ class BuyerRepository:
     
     async def post_buyer(self, buyer: dict):
         document = buyer
+        document["_id"] = await self.__collection.count_documents({}) + 1
         result = await self.__collection.insert_one(document)
         return result

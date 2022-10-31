@@ -10,7 +10,7 @@ router = APIRouter()
 
 @router.get('/buyers/{id}', status_code=200, response_model=BuyerModel)
 @inject
-async def get_buyer(id: str, buyer_repository: BuyerRepository = Depends(
+async def get_buyer(id: int, buyer_repository: BuyerRepository = Depends(
     Provide[Container.buyer_repository_provider])):
     buyer = await buyer_repository.fetch_buyer(id)
     if buyer:
