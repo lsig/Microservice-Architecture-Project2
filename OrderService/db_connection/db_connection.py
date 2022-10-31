@@ -1,5 +1,17 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 #TODO
 class DbConnection(ABC):
-    pass
+    @abstractmethod
+    def execute():
+        pass
+
+    @abstractmethod
+    def commit():
+        pass
+
+    
+    @abstractmethod
+    def run_migrations():
+        #TODO implement here
+        pass

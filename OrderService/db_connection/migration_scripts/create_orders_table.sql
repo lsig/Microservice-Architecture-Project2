@@ -1,7 +1,9 @@
 CREATE TABLE IF NOT EXISTS orders(
-    id int PRIMARY KEY,
+    id serial PRIMARY KEY,
     productId int not null,
     buyerId int not null,
-    cardNumber VARCHAR not null,
+    cardNumber CHAR(16) not null,
     totalPrice float not null
-)
+);
+
+
