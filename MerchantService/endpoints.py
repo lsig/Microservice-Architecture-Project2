@@ -10,7 +10,7 @@ router = APIRouter()
 
 @router.get('/merchants/{id}', status_code=200, response_model=MerchantModel)
 @inject
-async def get_merchant(id: str, merchant_repository: MerchantRepository = Depends(
+async def get_merchant(id: int, merchant_repository: MerchantRepository = Depends(
     Provide[Container.merchant_repository_provider])):
     merchant = await merchant_repository.fetch_merchant(id)
     if merchant:
