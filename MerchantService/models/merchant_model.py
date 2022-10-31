@@ -18,7 +18,7 @@ class PyObjectId(ObjectId):
         field_schema.update(type="string")
 
 class MerchantModel(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    id: int = Field(None, alias="_id") ### better id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     name: str
     ssn: str
     email: str

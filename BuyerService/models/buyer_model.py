@@ -18,7 +18,7 @@ class PyObjectId(ObjectId):
         field_schema.update(type="string")
 
 class BuyerModel(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    id: int = Field(None, alias="_id")  #Better PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     name: str
     ssn: str
     email: str
