@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
-class RabbitConfig(BaseModel):
+class DbConfig(BaseModel):
     host: str
-    port: str
+    port: int
     user: str
     password: str
