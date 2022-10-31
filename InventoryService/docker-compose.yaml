@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  database:
+    image: postgres:15.0
+    container_name: postgresInventory_0.1
+    restart: always
+
+    environment:
+      - POSTGRES_USER=inventory
+      - POSTGRES_PASSWORD=inventory
+      - POSTGRES_DB=inventory
+    
+    ports:
+      - 5433:5432
+
+    volumes:
+      - inventory_volume:/var/lib/postgresql/data
+
+  rabbitmq3:
+    container_name: "rabbitmq3"
+    image: rabbitmq:3.8-management-alpine
+    environment:
+        - RABBITMQ_DEFAULT_USER=myuser
+        - RABBITMQ_DEFAULT_PASS=mypassword
+    ports:
+        # AMQP protocol port
+        - '5672:5672'
+        # HTTP management UI
+        - '15672:15672'
+
+
+volumes:
+  inventory_volume:
