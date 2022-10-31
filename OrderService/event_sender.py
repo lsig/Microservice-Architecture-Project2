@@ -25,4 +25,4 @@ class EventSender:
 
 
     def send_order_created_event(self, order: OrderModel):
-        self.channel.basic_publish(exchange='order_created', routing_key='', body=str(order))
+        self.channel.basic_publish(exchange='order_created', routing_key='', body=order.json())
