@@ -1,6 +1,7 @@
 from dependency_injector import providers, containers
 from db_connection.db_config import DbConfig
 from db_connection.postgres_db_connection import PostgresDbConnection
+from event_sender import EventSender
 
 
 from infrastructure.settings import Settings
@@ -27,10 +28,18 @@ class Container(containers.DeclarativeContainer):
 
     order_repository_provider = providers.Singleton(
         OrderRepository,
-        db_connection=db_connection_provider
+        connection=db_connection_provider
     )
 
     order_service_provider = providers.Singleton(
         OrderService,
         order_repository=order_repository_provider
+    )
+
+
+
+    event_sender_provider = providers.Singleton(
+        EventSender,
+        user=config.q_user,
+        password=config.q_password
     )
