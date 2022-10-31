@@ -16,4 +16,4 @@ class PaymentSender:
     @retry(pika.exceptions.AMQPConnectionError, delay=5, jitter=(1, 3))
     def __get_connection(self):
         credentials = pika.PlainCredentials('myuser', 'mypassword')
-        return pika.BlockingConnection(pika.ConnectionParameters(host='host.docker.internal', port='5672', virtual_host='/', credentials=credentials))
+        return pika.BlockingConnection(pika.ConnectionParameters(host='host.docker.internal', port='5800', virtual_host='/', credentials=credentials))
