@@ -15,6 +15,7 @@ class PaymentEmailSender:
         self.channel.queue_bind(exchange="payment", queue=self.queue_name)
 
     def callback(self, ch, method, properties, body):
+        print("received event")
         order = json.loads(body)
         order_id = order["order_id"]
         success = order["payment_succsess"]
@@ -27,7 +28,7 @@ class PaymentEmailSender:
                 f"Order {order_id} purchase has failed"
             ]
 
-        self.email.send("myuser@gmail.com", "Order has been created", contents)
+        self.email.send("project2.honnun@gmail.com", "Order has been created", contents)
         
 
     def consume(self):
