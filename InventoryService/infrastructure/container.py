@@ -41,13 +41,17 @@ class Container(containers.DeclarativeContainer):
 
     
 
-    rabbitmq_config_provide = providers.Factory(
-        RabbitmqConfig
-    ) 
+    rb_config = providers.Singleton(
+        RabbitmqConfig,
+        host=config.rabbitmq_log_host,
+        port=config.rabbitmq_log_port,
+        user=config.rabbitmg_log_user,
+        password=config.rabbitmq_log_password
+    )
 
     rabbitmq_connection_provide = providers.Factory(
         RabbitmqConnection,
-        rabbitmq_config=rabbitmq_config_provide
+        rabbit_config=rb_config
     )
 
     event_receiver_provide = providers.Factory(

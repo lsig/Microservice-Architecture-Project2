@@ -22,8 +22,9 @@ container.config.from_pydantic(settings)
 container.wire(modules=[inventory_endpoints])
 
 app = start_app(container)
-event_receiver = container.event_receiver_provide
+event_receiver = container.event_receiver_provide()
 
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host=settings.app_host, port=8003, reload=True)
+    event_receiver.consume()

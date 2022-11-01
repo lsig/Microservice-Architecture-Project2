@@ -10,6 +10,10 @@ class Settings(BaseSettings):
     db_password: str
     db_port: str
     
+    rabbitmq_log_host: str
+    rabbitmq_log_port: str
+    rabbitmg_log_user: str
+    rabbitmq_log_password: str
 
     class Config:
         env_file = ".env"

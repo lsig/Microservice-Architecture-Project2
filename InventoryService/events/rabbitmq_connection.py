@@ -1,12 +1,10 @@
+import pika
+from retry import retry
 
+from events.rabbitmq_config import RabbitConfig
 
-
-
-from events.i_event_connection import IEventConnection
-from events.rabbitmq_config import RabbitmqConfig
-
-
-class RabbitmqConnection(IEventConnection):
-    def __init__(self, rabbitmq_config: RabbitmqConfig) -> None:
-        self.config = rabbitmq_config
-        super().__init__()
+class RabbitmqConnection:
+    @retry(pika.exceptions.AMQPConnectionError, delay=5, jitter=(1, 3))
+    def __init__(self, rabbit_config: RabbitConfig):
+        credentials = pika.PlainCredentials(rabbit_config.user, rabbit_config.password)
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=rabbit_config.host, port=rabbit_config.port, virtual_host='/', credentials=credentials))
