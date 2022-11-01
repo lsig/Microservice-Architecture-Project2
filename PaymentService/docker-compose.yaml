@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  payment-api:
+    build: .
+    ports:
+      - "8004:8004"
+
+    image: payment_api:1.1
+    depends_on:
+      - mongodb_container
+  
+  rabbitmq3:
+        container_name: "rabbitmq3"
+        image: rabbitmq:3.8-management-alpine
+        environment:
+            - RABBITMQ_DEFAULT_USER=myuser
+            - RABBITMQ_DEFAULT_PASS=mypassword
+        ports:
+            # AMQP protocol port
+            - '5672:5672'
+            # HTTP management UI
+            - '15672:15672'
+
+  mongodb_container:
+    image: mongo:latest
+    environment:
+        MONGO_INITDB_ROOT_USERNAME: root
+        MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    ports:
+        - "27017:27017"
+    volumes:
+        - mongodb_data_container:/data/db
+
+volumes:
+  mongodb_data_container:
