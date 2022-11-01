@@ -37,5 +37,5 @@ class Container(containers.DeclarativeContainer):
     payment_receiver_provider = providers.Factory(
         PaymentEmailSender,
         connection=rb_connection,
-        EmailConfig=email_info
+        emailConfig=email_info
     )

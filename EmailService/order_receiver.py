@@ -6,7 +6,6 @@ from connections.rabbit_connection import RabbitMQConnection
 
 class OrderEmailSender:
     def __init__(self, connection: RabbitMQConnection, emailConfig: EmailConfig) -> None:
-        # TODO: initate connection
         self.connection = connection.connection
         self.email = yagmail.SMTP(emailConfig.email, emailConfig.email_password)
         self.channel = self.connection.channel()
@@ -16,6 +15,7 @@ class OrderEmailSender:
         self.channel.queue_bind(exchange="order_created", queue=self.queue_name)
 
     def callback(self, ch, method, properties, body):
+        print("Order received")
         order = json.loads(body)
         order_id = order["orderId"]
         order_name = order["productName"]
