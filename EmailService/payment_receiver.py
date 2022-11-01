@@ -5,7 +5,6 @@ from connections.rabbit_connection import RabbitMQConnection
 
 class PaymentEmailSender:
     def __init__(self, connection: RabbitMQConnection, emailConfig: EmailConfig) -> None:
-        # TODO: initate connection
         self.connection = connection.connection
         self.email = yagmail.SMTP(emailConfig.email, emailConfig.email_password)
         self.channel = self.connection.channel()
