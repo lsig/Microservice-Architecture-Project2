@@ -4,11 +4,11 @@ class PaymentRepository:
     def __init__(self, connection: MongoDbConnection):
         self.__collection = connection.collection
     
-    async def fetch_merchant(self, id: int): 
-        document = await self.__collection.find_one({"_id":id})
+    async def fetch_payment(self, id: int): 
+        document = await self.__collection.find_one({"order_id":id})
         return document
     
-    async def post_merchant(self, merchant: dict):
-        document = merchant
+    async def post_payment(self, payment: dict):
+        document = payment
         result = await self.__collection.insert_one(document)
         return result

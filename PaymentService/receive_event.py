@@ -1,21 +1,16 @@
-import pika
-from retry import retry
-from fastapi import Depends
-from dependency_injector.wiring import Provide, inject
 import json
+import requests
 
-from connections.rabbit_config import RabbitConfig
+from connections.rabbitmq_connection import RabbitMQConnection
 from emit_event import PaymentSender
-from infrastructure.container import Container
 from models.payment_model import PaymentModel
 from models.payment_converter import OrderConverter
 
 class OrderReceiver:
-    @inject
-    def __init__(self, rabbit_config: RabbitConfig = Depends(Provide[Container.rb_config]) ) -> None:
+    def __init__(self, connection: RabbitMQConnection) -> None:
         self.order_converter = OrderConverter()
-        self.payment_sender = PaymentSender()
-        self.connection = self.__get_connection(rabbit_config)
+        self.payment_sender = PaymentSender(connection)
+        self.connection = connection.connection
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange="order_created", exchange_type="fanout")
         result = self.channel.queue_declare(queue='')
@@ -28,6 +23,7 @@ class OrderReceiver:
         is_valid = self.validate(info)
         event: PaymentModel = self.order_converter.to_payment_response(body, is_valid)
         self.payment_sender.send_message(event)
+        requests.post("http://host.docker.internal:8004/payments", data=event)
         
 
     def consume(self):
@@ -36,10 +32,10 @@ class OrderReceiver:
     
     def validate(self, info):
         card_info = info["creditCard"]
-        card_number = self.get_card_digits(card_info["cardNumber"])
-        cvc = info["cvc"]
-        month = info["expirationMonth"]
-        year = info["expirationYear"]
+        card_number = card_info["cardNumber"]
+        cvc = card_info["cvc"]
+        month = card_info["expirationMonth"]
+        year = card_info["expirationYear"]
         is_card_valid = self.__validate_card_number(card_number)
         is_cvc_valid = self.__validate_cvc(cvc)
         is_month_valid = self.__validate_month(month)
@@ -61,6 +57,7 @@ class OrderReceiver:
         return checksum % 10
     
     def __validate_card_number(self, card_number):
+        card_number = self.__get_digits(card_number)
         is_valid = self.__luhn_checksum(card_number)
         return is_valid == 0
     
@@ -76,9 +73,3 @@ class OrderReceiver:
     
     def __validate_cvc(self, cvc):
         return len(cvc) == 3
-
-    
-    @retry(pika.exceptions.AMQPConnectionError, delay=5, jitter=(1, 3))
-    def __get_connection(self, rabbit_config: RabbitConfig):
-        credentials = pika.PlainCredentials(rabbit_config.user, rabbit_config.password)
-        return pika.BlockingConnection(pika.ConnectionParameters(host=rabbit_config.host, port=rabbit_config.port, virtual_host='/', credentials=credentials))

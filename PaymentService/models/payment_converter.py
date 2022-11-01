@@ -1,4 +1,4 @@
-from payment_model import PaymentModel
+from models.payment_model import PaymentModel
 
 class OrderConverter:
     def to_payment_response(self, order_object, is_valid) -> PaymentModel:

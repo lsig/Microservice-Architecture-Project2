@@ -26,5 +26,5 @@ async def save_payment(payment: PaymentModel,
     payment = jsonable_encoder(payment)
     new_payment = await payment_repository.post_payment(payment=payment)
     if new_payment:
-        return JSONResponse(status_code=201, content=payment["_id"])
+        return JSONResponse(status_code=201, content=payment["order_id"])
     raise HTTPException(400, "Bad request")

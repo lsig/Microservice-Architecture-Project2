@@ -2,8 +2,11 @@ from dependency_injector import containers, providers
 from connections.db_config import DbConfig
 from connections.mongodb_connection import MongoDbConnection
 from connections.rabbit_config import RabbitConfig
+from connections.rabbitmq_connection import RabbitMQConnection
+from emit_event import PaymentSender
 from infrastructure.settings import Settings
 from payment_repository import PaymentRepository
+from receive_event import OrderReceiver
 
 class Container(containers.DeclarativeContainer):
     config: Settings = providers.Configuration()
@@ -30,7 +33,22 @@ class Container(containers.DeclarativeContainer):
         password=config.rabbitmq_log_password
     )
 
+    rb_connection = providers.Singleton(
+        RabbitMQConnection,
+        rabbit_config=rb_config
+    )
+
     payment_repository_provider = providers.Factory(
         PaymentRepository,
         connection=db_connection
+    )
+
+    order_receiver_provider = providers.Factory(
+        OrderReceiver,
+        connection=rb_connection
+    )
+
+    payment_sender_provider = providers.Factory(
+        PaymentSender,
+        connection=rb_connection
     )
