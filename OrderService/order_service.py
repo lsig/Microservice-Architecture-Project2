@@ -11,8 +11,9 @@ from event_sender import EventSender
 
 
 class OrderService:
-    def __init__(self, order_repository: OrderRepository) -> None:
+    def __init__(self, order_repository: OrderRepository, event_sender: EventSender) -> None:
         self.order_repository = order_repository
+        self.event_sender = event_sender
         self.order_converter = OrderConverter()
 
 
@@ -29,16 +30,16 @@ class OrderService:
 
 
 
-    def post_order(self, order: OrderModel, event_sender: EventSender):
+    def post_order(self, order: OrderModel):
         #self.validate(order)
 
         #self.reserve_product(order.productId)
 
         order_id = self.order_repository.save_order(order)
 
-        order_event: OrderEventModel = self.order_converter.to_order_event(order_id, order)
+        order_event: OrderEventModel = self.order_converter.to_order_event(order_id[0][0], order)
 
-        event_sender.send_order_created_event(order_event)
+        #event_sender.send_order_created_event(order_event)
 
         return order_id
 

@@ -31,19 +31,14 @@ class Container(containers.DeclarativeContainer):
         connection=db_connection_provider
     )
 
-    order_service_provider = providers.Singleton(
-        OrderService,
-        order_repository=order_repository_provider
-    )
-
-
-
-    event_sender_provider = providers.Factory( #TODO check whether factory or singleton
+    event_sender_provider = providers.Singleton( #TODO check whether factory or singleton
         EventSender,
         user=config.q_user,
         password=config.q_password
     )
 
-    
-
-
+    order_service_provider = providers.Singleton(
+        OrderService,
+        order_repository=order_repository_provider,
+        event_sender=event_sender_provider
+    )

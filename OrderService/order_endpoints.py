@@ -18,5 +18,5 @@ async def get_order(id: int, order_service: OrderService = Depends(Provide[Conta
 
 @router.post('/orders', status_code=201)
 @inject
-async def post_order(order: OrderModel, event_sender: EventSender = Depends(Provide[Container.event_sender_provider]) , order_service: OrderService = Depends(Provide[Container.order_service_provider])):
-    return order_service.post_order(order, event_sender)
+async def post_order(order: OrderModel, order_service: OrderService = Depends(Provide[Container.order_service_provider])):
+    return order_service.post_order(order)
