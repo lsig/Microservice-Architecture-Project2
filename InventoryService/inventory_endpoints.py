@@ -23,3 +23,9 @@ async def get_product(id: int, inventory_service: InventoryService = Depends(Pro
 @inject
 async def post_product(product: ProductModel, inventory_service: InventoryService = Depends(Provide[Container.inventory_service_provide])) -> int:
     return inventory_service.save_products(product)
+
+
+@router.patch(path="/products/reserve/{id}", status_code=201, include_in_schema=False)
+@inject
+async def reserve_product(id: int, inventory_service: InventoryService = Depends(Provide[Container.inventory_service_provide])):
+    return inventory_service.reserve_product(id)
