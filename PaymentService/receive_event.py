@@ -20,8 +20,8 @@ class OrderReceiver:
     ### Is this the best way to implement this?
     def callback(self, ch, method, properties, body):
         info = json.loads(body)
-        is_valid = self.validate(info)
-        event: PaymentModel = self.order_converter.to_payment_response(body, is_valid)
+        is_valid = self.validate(info["orderModel"]["creditCard"])
+        event: PaymentModel = self.order_converter.to_payment_response(info, is_valid)
         self.payment_sender.send_message(event)
         requests.post("http://host.docker.internal:8004/payments", data=event)
         
@@ -30,8 +30,7 @@ class OrderReceiver:
         self.channel.basic_consume(queue=self.queue_name, on_message_callback=self.callback, auto_ack=True)
         self.channel.start_consuming()
     
-    def validate(self, info):
-        card_info = info["creditCard"]
+    def validate(self, card_info):
         card_number = card_info["cardNumber"]
         cvc = card_info["cvc"]
         month = card_info["expirationMonth"]
