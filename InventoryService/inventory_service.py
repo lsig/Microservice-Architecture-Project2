@@ -1,4 +1,4 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, BackgroundTasks
 from inventory_repository import InventoryRepository
 from models.product_model import ProductModel
 from models.product_response_model import ProductResponseModel

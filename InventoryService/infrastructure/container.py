@@ -1,6 +1,9 @@
 from dependency_injector import providers, containers
 from database.db_config import DbConfig
 from database.postgres_db_connection import PostgresDbConnection
+from events.event_receiver import EventReceiver
+from events.rabbitmq_config import RabbitmqConfig
+from events.rabbitmq_connection import RabbitmqConnection
 
 from infrastructure.settings import Settings
 from inventory_repository import InventoryRepository
@@ -35,6 +38,21 @@ class Container(containers.DeclarativeContainer):
         InventoryService,
         inventory_repository=inventory_repository_provide
     )
+
     
+
+    rabbitmq_config_provide = providers.Factory(
+        RabbitmqConfig
+    ) 
+
+    rabbitmq_connection_provide = providers.Factory(
+        RabbitmqConnection,
+        rabbitmq_config=rabbitmq_config_provide
+    )
+
+    event_receiver_provide = providers.Factory(
+        EventReceiver,
+        event_connection=rabbitmq_connection_provide
+    )
 
 
