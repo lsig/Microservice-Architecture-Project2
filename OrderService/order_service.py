@@ -31,10 +31,10 @@ class OrderService:
 
 
     def post_order(self, order: OrderModel):
-        #self.validate(order)
-
         #self.reserve_product(order.productId)
-
+        merchant = self.__validate_merchant(order)
+        buyer = self.__validate_buyer(order)
+        product = self.__validate_product(order)
         order_id = self.order_repository.save_order(order)
 
         order_event: OrderEventModel = self.order_converter.to_order_event(order_id[0][0], order)
@@ -44,21 +44,21 @@ class OrderService:
         return order_id
 
 
-
-
-    def validate(self, order: OrderModel):
-
-        # check if merchant exists.
-
-        merchant = get(f"http://localhost:8001/merchants/635ff4f447f9052cf0f0b5fdAAA")#{order.merchantId}")
+    def __validate_merchant(self, order: OrderModel):
+        merchant = get(f"http://localhost:8001/merchants/{order.merchantId}")
         merchant_content = merchant.json()
         if merchant.status_code == 404:
             raise HTTPException(status_code=400, detail="Merchant does not exist")
-        
+        return merchant_content
+
+    def __validate_buyer(self, order: OrderModel):
         buyer = get(f"http://localhost:8002/buyers/{order.buyerId}")
+        buyer_content = buyer.json()
         if buyer.status_code == 404:
             raise HTTPException(status_code=400, detail="Buyer does not exist")
-
+        return buyer_content
+    
+    def __validate_product(self, order: OrderModel):
         product = get(f"http://localhost:8003/products/{order.productId}")
         if product.status_code == 404:
             raise HTTPException(status_code=400, detail="Product does not exist")
@@ -71,6 +71,10 @@ class OrderService:
 
         if order.discount != 0 and not merchant_content["allows discount"]:
             raise HTTPException(status_code=400, detail="Merchant does not allow discount")
+        return product_content
+        
+
+
 
 
    
