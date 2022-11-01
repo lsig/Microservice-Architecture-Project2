@@ -3,8 +3,7 @@ from fastapi import FastAPI
 from infrastructure.container import Container
 from infrastructure.settings import Settings
 import endpoints
-import emit_event
-from receive_event import OrderReceiver
+
 
 def create_app(container: Container) -> FastAPI:
     app = FastAPI()
