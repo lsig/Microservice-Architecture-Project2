@@ -10,6 +10,6 @@ payment_receiver = container.payment_receiver_provider()
 
 
 if __name__ == '__main__':
+    print("Waiting for ...")
     order_receiver.consume()
     payment_receiver.consume()
-    print("Waiting for ...")

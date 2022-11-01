@@ -17,13 +17,14 @@ class OrderEmailSender:
     def callback(self, ch, method, properties, body):
         print("Order received")
         order = json.loads(body)
-        order_id = order["orderId"]
-        order_name = order["productName"]
-        order_price = order["totalPrice"]
+        order_model = order["orderModel"]
+        order_id = order["id"]
+        order_name = order_model["productId"] #TODO we need productName (get this in orderService/service - validate())
+        order_price = 100#order_model["totalPrice"]
         contents = [
             f"Order ID: {order_id}\nProduct name: {order_name}\nPrice: {order_price}"
         ]
-        self.email.send("myuser@gmail.com", "Order has been created", contents)
+        self.email.send("project2.honnun@gmail.com", "Ég veit leyndarmálið þitt Baldvin...", contents)
 
         
     def consume(self):
