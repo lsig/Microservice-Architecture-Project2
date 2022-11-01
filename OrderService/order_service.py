@@ -39,7 +39,7 @@ class OrderService:
 
         order_event: OrderEventModel = self.order_converter.to_order_event(order_id[0][0], order)
 
-        #event_sender.send_order_created_event(order_event)
+        self.event_sender.send_order_created_event(order_event)
 
         return order_id
 
