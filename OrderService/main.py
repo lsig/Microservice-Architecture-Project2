@@ -6,21 +6,22 @@ from infrastructure.settings import Settings
 from infrastructure.container import Container
 import order_endpoints
 
-def create_app() -> FastAPI:
-    settings = Settings("./infrastructure/.env")
-    container = Container()
-    container.config.from_pydantic(settings)
-    container.wire(modules=[order_endpoints])
+
+def create_app(container: Container) -> FastAPI:
 
     app = FastAPI()
-
     app.container = container
     app.include_router(router)
 
     return app
 
 
-app = create_app()
+settings = Settings("./infrastructure/.env")
+container = Container()
+container.config.from_pydantic(settings)
+container.wire(modules=[order_endpoints])
+
+app = create_app(container)
 
 
 if __name__ == "__main__":

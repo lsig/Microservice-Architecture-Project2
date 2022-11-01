@@ -13,7 +13,6 @@ class PostgresDbConnection(DbConnection):
         cursor = self.__connection.cursor()
         cursor.execute(sql)
 
-        #TODO check whether this is necessary. used in lab 10
         try:
             return cursor.fetchall()
         except psycopg2.ProgrammingError:

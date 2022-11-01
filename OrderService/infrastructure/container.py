@@ -38,8 +38,12 @@ class Container(containers.DeclarativeContainer):
 
 
 
-    event_sender_provider = providers.Singleton(
+    event_sender_provider = providers.Factory( #TODO check whether factory or singleton
         EventSender,
         user=config.q_user,
         password=config.q_password
     )
+
+    
+
+

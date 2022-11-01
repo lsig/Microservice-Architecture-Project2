@@ -4,6 +4,7 @@ from fastapi import HTTPException
 
 from models.order_model import OrderModel
 from models.order_response import OrderResponse
+from models.order_event_model import OrderEventModel
 from order_repository import OrderRepository
 from converters.order_converter import OrderConverter
 from event_sender import EventSender
@@ -29,13 +30,15 @@ class OrderService:
 
 
     def post_order(self, order: OrderModel, event_sender: EventSender):
-        self.validate(order)
+        #self.validate(order)
 
         #self.reserve_product(order.productId)
 
         order_id = self.order_repository.save_order(order)
 
-        event_sender.send_order_created_event(order)
+        order_event: OrderEventModel = self.order_converter.to_order_event(order_id, order)
+
+        event_sender.send_order_created_event(order_event)
 
         return order_id
 
