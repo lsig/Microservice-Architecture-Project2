@@ -11,7 +11,7 @@ class InventoryService:
         self.inventory_converter = InventoryConverter()
         
 
-    def get_product(self, id: int):
+    def get_product(self, id: int) -> ProductResponseModel:
         product = self.inventory_repository.get_product(id)
 
         if product == []:
@@ -21,5 +21,25 @@ class InventoryService:
 
         return product_response
 
+
+
     def save_products(self, product: ProductModel):
         return self.inventory_repository.save_product(product)
+
+
+
+    def reserve_product(self, id: int):
+        reserved: int = self.get_product_reserved_count(id)
+
+        return self.inventory_repository.reserve_product(id, reserved)
+
+
+    def get_product_reserved_count(self, id: int):
+        product = self.get_product(id)
+
+        if (product.quantity <= product.reserved):
+            raise HTTPException(status_code=400, detail="Product is sold out")
+
+        return product.reserved
+
+
