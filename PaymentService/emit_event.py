@@ -9,4 +9,4 @@ class PaymentSender:
         self.channel.exchange_declare(exchange="payment", exchange_type="fanout")
 
     def send_message(self, message: PaymentModel):
-        self.channel.basic_publish(exchange='payment', routing_key='', body=message)
+        self.channel.basic_publish(exchange='payment', routing_key='', body=message.json())

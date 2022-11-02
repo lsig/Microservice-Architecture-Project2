@@ -25,10 +25,16 @@ class OrderReceiver:
         is_valid = self.validate(info["orderModel"]["creditCard"])
         event: PaymentModel = self.order_converter.to_payment_response(info, is_valid)
         self.payment_sender.send_message(event)
-        self.payment_repo.post_payment(event)
-        payment = self.payment_repo.fetch_payment(event["order_id"])
+        async def send_to_db(event):
+            doc = await self.payment_repo.post_payment(event)
+            payment = await self.payment_repo.fetch_payment(event["order_id"])
+            print(f"Payment {payment} succsessfully stored")
+        send_to_db(event)
+    
+    async def send_to_db(self, event):
+        doc = await self.payment_repo.post_payment(event)
+        payment = await self.payment_repo.fetch_payment(event["order_id"])
         print(f"Payment {payment} succsessfully stored")
-        #requests.post("http://host.docker.internal:8004/payments", data=event)
         
 
     def consume(self):
@@ -51,9 +57,8 @@ class OrderReceiver:
         return [int(i) for i in str(cc_number)]
     
     def __luhn_checksum(self, card_number):
-        digits = self.__get_digits(card_number)
-        odd_digits = digits[::2]
-        even_digits = digits[1::2]
+        odd_digits = card_number[::2]
+        even_digits = card_number[1::2]
         checksum = 0
         checksum += sum(odd_digits)
         for i in even_digits:
@@ -71,9 +76,9 @@ class OrderReceiver:
         return False
     
     def __validate_year(self, year):
-        if year > 2021 and len(year) == 4:
+        if year > 2021 and len(str(year)) == 4:
             return True
         return False
     
     def __validate_cvc(self, cvc):
-        return len(cvc) == 3
+        return len(str(cvc)) == 3
