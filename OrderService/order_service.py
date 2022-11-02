@@ -80,8 +80,11 @@ class OrderService:
             raise HTTPException(status_code=400, detail="Product is sold out")
 
         #TODO sækja í inventory_service allar products eftir merchantID.
-        # if order.productId not in merchant["products"]:
-        #     raise HTTPException(status_code=400, detail="Product does not belong to merchant")
+        products_by_merchant = get(f"http://localhost:8003/products/all/by_merchant/{order.merchantId}") #TODO TEST THIS!!!
+        product_ids_by_merchant = [product['id'] for product in products_by_merchant.json()]
+        
+        if order.productId not in product_ids_by_merchant:
+            raise HTTPException(status_code=400, detail="Product does not belong to merchant")
 
         if order.discount != 0 and not merchant["allows_discount"]:
             raise HTTPException(status_code=400, detail="Merchant does not allow discount")

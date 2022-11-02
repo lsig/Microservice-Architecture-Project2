@@ -11,12 +11,20 @@ class InventoryRepository:
         self.__connection = db_connection
 
 
-    def get_product(self, id: int) -> ProductResponseModel:
+    def get_product(self, id: int):
         product = self.__connection.execute(f'''
         SELECT * FROM products WHERE id = {id} LIMIT 1
         ''')
 
         return product
+
+
+    def get_all_products_by_merchant_id(self, merchant_id: int):
+        products = self.__connection.execute(f'''
+        SELECT * FROM products WHERE merchantid = {merchant_id}
+        ''')
+
+        return products
 
 
     def save_product(self, product: ProductModel):

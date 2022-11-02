@@ -1,4 +1,6 @@
 from fastapi import HTTPException, BackgroundTasks
+from typing import List
+
 from inventory_repository import InventoryRepository
 from models.product_model import ProductModel
 from models.product_response_model import ProductResponseModel
@@ -12,7 +14,7 @@ class InventoryService:
         
 
     def get_product(self, id: int) -> ProductResponseModel:
-        product = self.inventory_repository.get_product(id)
+        product: List = self.inventory_repository.get_product(id)
 
         if product == []:
             raise HTTPException(status_code=404, detail="Product does not exist")
@@ -20,6 +22,14 @@ class InventoryService:
         product_response: ProductResponseModel = self.inventory_converter.to_product_response(product[0])
 
         return product_response
+
+
+    def get_all_products_by_merchant_id(self, merchant_id: int):
+        products: List[List] = self.inventory_repository.get_all_products_by_merchant_id(merchant_id)
+
+        products_response: List[ProductResponseModel] = self.inventory_converter.to_product_list_response(products)
+
+        return products_response
 
 
 
