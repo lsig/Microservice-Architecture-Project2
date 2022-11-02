@@ -49,7 +49,7 @@ class Container(containers.DeclarativeContainer):
         password=config.rabbitmq_log_password
     )
 
-    rabbitmq_connection_provide = providers.Factory(
+    rabbitmq_connection_provide = providers.Singleton(
         RabbitmqConnection,
         rabbit_config=rb_config
     )
