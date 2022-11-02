@@ -5,11 +5,13 @@ from connections.rabbitmq_connection import RabbitMQConnection
 from emit_event import PaymentSender
 from models.payment_model import PaymentModel
 from models.payment_converter import OrderConverter
+from payment_repository import PaymentRepository
 
 class OrderReceiver:
-    def __init__(self, connection: RabbitMQConnection) -> None:
+    def __init__(self, connection: RabbitMQConnection, payment_repo: PaymentRepository, payment_sender: PaymentSender) -> None:
         self.order_converter = OrderConverter()
-        self.payment_sender = PaymentSender(connection)
+        self.payment_repo = payment_repo
+        self.payment_sender = payment_sender
         self.connection = connection.connection
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange="order_created", exchange_type="fanout")
@@ -23,7 +25,10 @@ class OrderReceiver:
         is_valid = self.validate(info["orderModel"]["creditCard"])
         event: PaymentModel = self.order_converter.to_payment_response(info, is_valid)
         self.payment_sender.send_message(event)
-        requests.post("http://host.docker.internal:8004/payments", data=event)
+        self.payment_repo.post_payment(event)
+        payment = self.payment_repo.fetch_payment(event["order_id"])
+        print(f"Payment {payment} succsessfully stored")
+        #requests.post("http://host.docker.internal:8004/payments", data=event)
         
 
     def consume(self):

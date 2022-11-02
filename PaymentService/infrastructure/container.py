@@ -43,12 +43,14 @@ class Container(containers.DeclarativeContainer):
         connection=db_connection
     )
 
-    order_receiver_provider = providers.Factory(
-        OrderReceiver,
-        connection=rb_connection
-    )
-
     payment_sender_provider = providers.Factory(
         PaymentSender,
         connection=rb_connection
+    )
+
+    order_receiver_provider = providers.Factory(
+        OrderReceiver,
+        connection=rb_connection,
+        payment_repo=payment_repository_provider,
+        payment_sender=payment_sender_provider
     )
