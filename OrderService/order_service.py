@@ -1,4 +1,4 @@
-from requests import get
+from requests import get, patch
 from fastapi import HTTPException
 
 
@@ -31,17 +31,28 @@ class OrderService:
 
 
     def post_order(self, order: OrderModel):
-        #self.reserve_product(order.productId)
         merchant = self.__validate_merchant(order)
         buyer = self.__validate_buyer(order)
-        product = self.__validate_product(order)
+        product = self.__validate_product(order, merchant)
+
+        self.reserve_product(order.productId)
+
         order_id = self.order_repository.save_order(order)
 
-        order_event: OrderEventModel = self.order_converter.to_order_event(order_id[0][0], order)
+        order_event: OrderEventModel = self.order_converter.to_order_event(order_id[0][0], order, merchant, buyer, product)
 
         self.event_sender.send_order_created_event(order_event)
 
         return order_id
+
+
+    
+    def reserve_product(self, product_id: int):
+        reservation = patch(f"http://localhost:8003/products/reserve/{product_id}")
+
+        if reservation.status_code != 201:
+            raise HTTPException(status_code=reservation.status_code, detail=reservation.json()["detail"])
+
 
 
     def __validate_merchant(self, order: OrderModel):
@@ -51,6 +62,7 @@ class OrderService:
             raise HTTPException(status_code=400, detail="Merchant does not exist")
         return merchant_content
 
+
     def __validate_buyer(self, order: OrderModel):
         buyer = get(f"http://localhost:8002/buyers/{order.buyerId}")
         buyer_content = buyer.json()
@@ -58,23 +70,20 @@ class OrderService:
             raise HTTPException(status_code=400, detail="Buyer does not exist")
         return buyer_content
     
-    def __validate_product(self, order: OrderModel):
+
+    def __validate_product(self, order: OrderModel, merchant):
         product = get(f"http://localhost:8003/products/{order.productId}")
         if product.status_code == 404:
             raise HTTPException(status_code=400, detail="Product does not exist")
         product_content = product.json()
-        if product_content["amount"] == 0:
+        if product_content["quantity"] == 0:
             raise HTTPException(status_code=400, detail="Product is sold out")
 
-        if order.productId not in merchant_content["products"]:
-            raise HTTPException(status_code=400, detail="Product does not belong to merchant")
+        #TODO sækja í inventory_service allar products eftir merchantID.
+        # if order.productId not in merchant["products"]:
+        #     raise HTTPException(status_code=400, detail="Product does not belong to merchant")
 
-        if order.discount != 0 and not merchant_content["allows discount"]:
+        if order.discount != 0 and not merchant["allows_discount"]:
             raise HTTPException(status_code=400, detail="Merchant does not allow discount")
         return product_content
         
-
-
-
-
-   

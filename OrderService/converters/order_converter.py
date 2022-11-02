@@ -18,7 +18,7 @@ class OrderConverter:
         )
 
 
-    def to_order_event(self, id: int, order: OrderModel) -> OrderEventModel:
+    def to_order_event(self, id: int, order: OrderModel, merchant, buyer, product) -> OrderEventModel:
         return OrderEventModel(
             id=id,
             orderModel=order

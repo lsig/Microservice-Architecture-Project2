@@ -14,7 +14,7 @@ class EventSender:
     @retry(pika.exceptions.AMQPConnectionError, delay=5, jitter=(1, 3))
     def __get_connection(self):
         credentials = pika.PlainCredentials(self.user, self.password)
-        return pika.BlockingConnection(pika.ConnectionParameters(host='localhost', port='5672', virtual_host='/', credentials=credentials))
+        return pika.BlockingConnection(pika.ConnectionParameters(host='localhost', port='5672', virtual_host='/', credentials=credentials, heartbeat=1000))
 
 
     def initialize_channel(self):

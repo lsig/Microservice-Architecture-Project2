@@ -2,6 +2,7 @@ version: "3.8"
   
 services:
   db:
+    platform: linux/amd64
     image: postgres:15.0
     container_name: postgres_0.11
     restart: always
@@ -16,21 +17,8 @@ services:
       - 5432:5432
     
 
-  rabbitmq3:
-    container_name: "rabbitmq3"
-    image: rabbitmq:3.8-management-alpine
-    environment:
-        - RABBITMQ_DEFAULT_USER=myuser
-        - RABBITMQ_DEFAULT_PASS=mypassword
-    ports:
-        # AMQP protocol port
-        - '5672:5672'
-        # HTTP management UI
-        - '15672:15672'
-
-
-
   # order_api:
+  #   platform: linux/amd64
   #   build: .
   #   image: order_api:0.0.0
   #   restart: always
