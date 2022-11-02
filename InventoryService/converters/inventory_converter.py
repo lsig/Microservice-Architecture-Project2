@@ -1,3 +1,5 @@
+from typing import List
+
 from models.product_response_model import ProductResponseModel
 
 
@@ -11,3 +13,11 @@ class InventoryConverter:
             quantity = product[4],
             reserved = product[5]
         )
+
+
+    def to_product_list_response(self, products) -> List[ProductResponseModel]:
+        product_list_response = []
+        for product in products:
+            product_list_response.append(product)
+
+        return product_list_response

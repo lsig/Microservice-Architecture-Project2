@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from dependency_injector.wiring import inject, Provide
 from infrastructure.container import Container
 from inventory_service import InventoryService
+from typing import List
 
 from models.product_response_model import ProductResponseModel
 from models.product_model import ProductModel
@@ -17,6 +18,12 @@ router = APIRouter()
 @inject
 async def get_product(id: int, inventory_service: InventoryService = Depends(Provide[Container.inventory_service_provide])) -> ProductResponseModel:
     return inventory_service.get_product(id)
+
+
+@router.get(path="/products/all/by_merchant/{id}", status_code=200, include_in_schema=False)
+@inject
+async def get_all_products_by_merchant_id(merchant_id: int, inventroy_service: InventoryService = Depends(Provide[Container.inventory_service_provide])) -> List[ProductResponseModel]:
+    return inventroy_service.get_all_products_by_merchant_id(merchant_id)
 
 
 @router.post(path="/products", status_code=201)
