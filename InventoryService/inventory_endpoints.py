@@ -20,10 +20,10 @@ async def get_product(id: int, inventory_service: InventoryService = Depends(Pro
     return inventory_service.get_product(id)
 
 
-@router.get(path="/products/all/by_merchant/{id}", status_code=200, include_in_schema=False)
+@router.get(path="/products/all/by_merchant/{id}", status_code=200, include_in_schema=True)
 @inject
-async def get_all_products_by_merchant_id(merchant_id: int, inventroy_service: InventoryService = Depends(Provide[Container.inventory_service_provide])) -> List[ProductResponseModel]:
-    return inventroy_service.get_all_products_by_merchant_id(merchant_id)
+async def get_all_products_by_merchant_id(id: int, inventory_service: InventoryService = Depends(Provide[Container.inventory_service_provide])) -> List[ProductResponseModel]:
+    return inventory_service.get_all_products_by_merchant_id(id)
 
 
 @router.post(path="/products", status_code=201)
