@@ -22,7 +22,7 @@ class Sender:
         contents = [
             f"Order ID: {order_id}\nProduct name: {order_name}\nPrice: {order_price}"
         ]
-        self.email.send("project2.honnun@gmail.com", "Ég veit leyndarmálið þitt Baldvin...", contents)
+        self.email.send(to="project2.honnun@gmail.com", subject="Order has been created", contents=contents)
 
     
     def callback2(self, ch, method, properties, body):
@@ -31,15 +31,17 @@ class Sender:
         order_id = order["order_id"]
         success = order["payment_succsess"]
         if success:
+            subject = "Order has been purchased"
             contents = [
                 f"Order {order_id} has been successfully purchased"
             ]
         else: 
+            subject = "Order purchase failed"
             contents = [
                 f"Order {order_id} purchase has failed"
             ]
 
-        self.email.send("project2.honnun@gmail.com", "Order has been created", contents)
+        self.email.send(to="project2.honnun@gmail.com", subject=subject, contents=contents)
 
     def declare_order_exchange(self):
         self.channel.exchange_declare(exchange="order_created", exchange_type="fanout")
