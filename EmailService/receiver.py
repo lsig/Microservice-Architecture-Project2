@@ -10,7 +10,7 @@ class Sender:
         self.channel = self.connection.channel()
         self.declare_order_exchange()
         self.declare_payment_exchange()
-        self.channel.basic_qos(prefetch_count=1)
+        
     
     def callback1(self, ch, method, properties, body):
         print("Order received")
@@ -23,6 +23,7 @@ class Sender:
             f"Order ID: {order_id}\nProduct name: {order_name}\nPrice: {order_price}"
         ]
         self.email.send(to="project2.honnun@gmail.com", subject="Order has been created", contents=contents)
+        ch.basic_ack(delivery_tag=method.delivery_tag)
 
     
     def callback2(self, ch, method, properties, body):
@@ -42,26 +43,28 @@ class Sender:
             ]
 
         self.email.send(to="project2.honnun@gmail.com", subject=subject, contents=contents)
+        ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def declare_order_exchange(self):
         self.channel.exchange_declare(exchange="order_created", exchange_type="fanout")
-        result = self.channel.queue_declare(queue='')
+        result = self.channel.queue_declare(queue='', durable=True)
         self.queue_name1 = result.method.queue
         self.channel.queue_bind(exchange="order_created", queue=self.queue_name1)
     
     def declare_payment_exchange(self):
         self.channel.exchange_declare(exchange="payment", exchange_type="fanout")
-        result = self.channel.queue_declare(queue='')
+        result = self.channel.queue_declare(queue='', durable=True)
         self.queue_name2 = result.method.queue
         self.channel.queue_bind(exchange="payment", queue=self.queue_name2)
     
     def consume_order(self):
-        self.channel.basic_consume(queue=self.queue_name1, on_message_callback=self.callback1, auto_ack=True)
+        self.channel.basic_consume(queue=self.queue_name1, on_message_callback=self.callback1)
     
     def consume_payment(self):
-        self.channel.basic_consume(queue=self.queue_name2, on_message_callback=self.callback2, auto_ack=True)
+        self.channel.basic_consume(queue=self.queue_name2, on_message_callback=self.callback2)
     
     def consume(self):
+        self.channel.basic_qos(prefetch_count=1)
         self.consume_order()
         self.consume_payment()
         self.channel.start_consuming()

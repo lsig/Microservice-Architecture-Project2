@@ -1,5 +1,6 @@
 import json
 import requests
+import pika
 
 from connections.rabbitmq_connection import RabbitMQConnection
 from emit_event import PaymentSender
@@ -15,7 +16,7 @@ class OrderReceiver:
         self.connection = connection.connection
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange="order_created", exchange_type="fanout")
-        result = self.channel.queue_declare(queue='')
+        result = self.channel.queue_declare(queue='', durable=True)
         self.queue_name = result.method.queue
         self.channel.queue_bind(exchange="order_created", queue=self.queue_name)
 
@@ -25,20 +26,15 @@ class OrderReceiver:
         is_valid = self.validate(info["orderModel"]["creditCard"])
         event: PaymentModel = self.order_converter.to_payment_response(info, is_valid)
         self.payment_sender.send_message(event)
+        ch.basic_ack(delivery_tag=method.delivery_tag)
         requests.post("http://host.docker.internal:8004/payments", data=event.json())
         order_id = info["id"]
         payment = requests.get(f"http://host.docker.internal:8004/payments/{order_id}")
         print(f"Payment {payment.text} succsessfully stored")
-        #self.send_to_db(event)
-    
-    async def send_to_db(self, event):
-        doc = await self.payment_repo.post_payment(event)
-        payment = await self.payment_repo.fetch_payment(event["order_id"])
-        print(f"Payment {payment} succsessfully stored")
-        
+
 
     def consume(self):
-        self.channel.basic_consume(queue=self.queue_name, on_message_callback=self.callback, auto_ack=True)
+        self.channel.basic_consume(queue=self.queue_name, on_message_callback=self.callback)
         self.channel.start_consuming()
     
     def validate(self, card_info):

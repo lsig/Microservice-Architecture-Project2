@@ -182,6 +182,7 @@ services:
     image: email_service:0.0
     #container_name: email_service
     deploy:
+      mode: replicated
       replicas: 2
 
     depends_on:
