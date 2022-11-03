@@ -180,7 +180,9 @@ services:
   email_service:
     build: ./EmailService
     image: email_service:0.0
-    container_name: email_service
+    #container_name: email_service
+    deploy:
+      replicas: 2
 
     depends_on:
       - rabbitmq3
