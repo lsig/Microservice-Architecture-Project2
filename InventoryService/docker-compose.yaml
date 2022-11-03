@@ -1,31 +1,31 @@
 version: "3.8"
 
 services:
-  database:
+  inventory_db:
     platform: linux/amd64 #we need this because we run on ARM devices. https://stackoverflow.com/questions/65612411/forcing-docker-to-use-linux-amd64-platform-by-default-on-macos/69636473#69636473
     image: postgres:15.0
-    container_name: postgresInventory_0.1
+    container_name: inventory_db
     restart: always
 
     environment:
-      - POSTGRES_USER=inventory
       - POSTGRES_PASSWORD=inventory
+      - POSTGRES_USER=inventory
       - POSTGRES_DB=inventory
-    
+
     ports:
-      - "5433:5432"
+      - 5433:5432
 
     volumes:
       - inventory_volume:/var/lib/postgresql/data
 
-  inventory_service:
-    platform: linux/amd64
-    build: .
-    ports:
-      - "8003:8003"
-    image: inventory_api:0.6
-    depends_on:
-      - database
+  # inventory_service:
+  #   platform: linux/amd64
+  #   build: .
+  #   ports:
+  #     - "8003:8003"
+  #   image: inventory_api:0.6
+  #   depends_on:
+  #     - database
 
 volumes:
   inventory_volume:

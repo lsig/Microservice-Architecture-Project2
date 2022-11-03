@@ -6,6 +6,7 @@ from typing import List
 
 from models.product_response_model import ProductResponseModel
 from models.product_model import ProductModel
+from models.outside_models.payment_model import PaymentModel
 
 
 
@@ -36,3 +37,11 @@ async def post_product(product: ProductModel, inventory_service: InventoryServic
 @inject
 async def reserve_product(id: int, inventory_service: InventoryService = Depends(Provide[Container.inventory_service_provide])):
     return inventory_service.reserve_product(id)
+
+
+@router.patch(path="/products/process_payment", status_code=201)
+@inject
+async def process_payment(payment_info: PaymentModel, inventory_service: InventoryService = Depends(Provide[Container.inventory_service_provide])):
+    response = inventory_service.process_payment(payment_info)
+
+    return response

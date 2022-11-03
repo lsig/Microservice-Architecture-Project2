@@ -5,6 +5,7 @@ from infrastructure.container import Container
 from infrastructure.settings import Settings
 from inventory_endpoints import router
 import inventory_endpoints
+import threading
 
 
 def start_app(container: Container) -> FastAPI:
@@ -25,6 +26,10 @@ app = start_app(container)
 event_receiver = container.event_receiver_provide()
 
 
+
 if __name__ == "__main__":
+    print("inventory service up")
+    event_thread = threading.Thread(target=event_receiver.consume)
+    event_thread.start()
+
     uvicorn.run("main:app", host=settings.app_host, port=8003, reload=True)
-    event_receiver.consume()

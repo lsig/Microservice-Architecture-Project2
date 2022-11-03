@@ -4,6 +4,7 @@ from typing import List
 from inventory_repository import InventoryRepository
 from models.product_model import ProductModel
 from models.product_response_model import ProductResponseModel
+from models.outside_models.payment_model import PaymentModel
 from converters.inventory_converter import InventoryConverter
 
 
@@ -44,6 +45,7 @@ class InventoryService:
         return self.inventory_repository.reserve_product(id, reserved)
 
 
+
     def get_product_reserved_count(self, id: int):
         product = self.get_product(id)
 
@@ -52,4 +54,15 @@ class InventoryService:
 
         return product.reserved
 
+
+
+    def process_payment(self, payment: PaymentModel):
+
+        if payment.payment_succsess:
+            response = self.inventory_repository.remove_product(payment.product_id)
+
+        else:
+            response = self.inventory_repository.remove_reservation(payment.product_id)
+
+        return response
 
