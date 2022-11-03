@@ -2,13 +2,181 @@ version: '3.8'
 
 services:
   rabbitmq3:
-    container_name: "rabbitmq3"
+    container_name: rabbitmq3
     image: rabbitmq:3.8-management-alpine
+
     environment:
         - RABBITMQ_DEFAULT_USER=myuser
         - RABBITMQ_DEFAULT_PASS=mypassword
+
     ports:
         # AMQP protocol port
         - '5672:5672'
         # HTTP management UI
         - '15672:15672'
+
+
+  order_db:
+    platform: linux/amd64
+    image: postgres:15.0
+    container_name: order_db
+    restart: always
+
+    environment:
+      - POSTGRES_PASSWORD=order
+      - POSTGRES_USER=order
+      - POSTGRES_DB=order
+    
+    ports:
+      - 5432:5432
+
+    volumes: 
+      - order_volume:/var/lib/postgresql/data
+
+
+
+  inventory_db:
+    platform: linux/amd64
+    image: postgres:15.0
+    container_name: inventory_db
+    restart: always
+
+    environment:
+      - POSTGRES_PASSWORD=inventory
+      - POSTGRES_USER=inventory
+      - POSTGRES_DB=inventory
+
+    ports:
+      - 5433:5432
+
+    volumes:
+      - inventory_volume:/var/lib/postgresql/data
+
+
+
+  buyer_db:
+    image: mongo:latest
+    container_name: buyer_db
+
+    environment:
+        MONGO_INITDB_ROOT_USERNAME: root
+        MONGO_INITDB_ROOT_PASSWORD: rootpassword
+
+    ports:
+        - "27018:27017"
+
+    volumes:
+        - buyer_volume:/data/db
+
+
+
+  merchant_db:
+    image: mongo:latest
+    container_name: merchant_db
+
+    environment:
+        MONGO_INITDB_ROOT_USERNAME: root
+        MONGO_INITDB_ROOT_PASSWORD: rootpassword
+
+    ports:
+        - "27017:27017"
+
+    volumes:
+        - merchant_volume:/data/db
+
+
+
+
+  payment_db:
+    image: mongo:latest
+    container_name: payment_db
+
+    environment:
+        MONGO_INITDB_ROOT_USERNAME: root
+        MONGO_INITDB_ROOT_PASSWORD: rootpassword
+
+    ports:
+        - "27019:27017"
+
+    volumes:
+        - payment_volume:/data/db
+
+
+
+######
+
+
+
+
+  # order_service:
+  #   platform: linux/amd64
+  #   build: ./OrderService
+  #   image: order_service:0.0
+  #   container_name: order_service
+
+  #   ports:
+  #     - 8000:8000
+
+  #   depends_on:
+  #     - order_db
+
+
+  merchant_service:
+    build: ./MerchantService
+    image: merchant_service:0.0
+    container_name: merchant_service
+
+    ports:
+      - "8001:8001"
+
+    depends_on:
+      - merchant_db
+
+
+
+  buyer_service:
+    build: ./BuyerService
+    image: buyer_service:0.0
+    container_name: buyer_service
+
+    ports:
+      - 8002:8002
+
+    depends_on:
+      - buyer_db
+
+
+
+  inventory_service:
+    platform: linux/amd64
+    build: ./InventoryService
+    image: inventory_service:0.0
+    container_name: inventory_service
+
+    ports:
+      - 8003:8003
+
+    depends_on:
+      - inventory_db
+
+
+
+
+  payment_service:
+    build: ./PaymentService
+    image: payment_service:0.0
+    container_name: payment_service
+
+    ports:
+      - "8004:8004"
+
+    depends_on:
+      - payment_db
+
+
+volumes:
+  order_volume:
+  inventory_volume:
+  buyer_volume:
+  merchant_volume:
+  payment_volume:
