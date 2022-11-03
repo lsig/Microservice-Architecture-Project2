@@ -17,13 +17,13 @@ services:
       - 5432:5432
     
 
-  # order_api:
-  #   platform: linux/amd64
-  #   build: .
-  #   image: order_api:0.0.0
-  #   restart: always
-  #   ports:
-  #     - 8000:8000
+  order_api:
+    platform: linux/amd64
+    build: .
+    image: order_api:0.0.0
+    restart: always
+    ports:
+      - 8000:8000
     
 
 volumes:

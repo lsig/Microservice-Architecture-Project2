@@ -1,4 +1,4 @@
-dependency-injector==4.36.2
+dependency-injector==4.40.0
 fastapi==0.85.1
 pika==1.2.0
 psycopg2-binary==2.9.5

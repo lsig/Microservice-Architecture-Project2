@@ -12,12 +12,14 @@ from models.outside_models.product_model import ProductModel
 from order_repository import OrderRepository
 from converters.order_converter import OrderConverter
 from event_sender import EventSender
+from infrastructure.connection_config import ConnectionConfig
 
 
 class OrderService:
-    def __init__(self, order_repository: OrderRepository, event_sender: EventSender) -> None:
+    def __init__(self, order_repository: OrderRepository, event_sender: EventSender, connection_config: ConnectionConfig) -> None:
         self.order_repository = order_repository
         self.event_sender = event_sender
+        self.connection_config = connection_config
         self.order_converter = OrderConverter()
 
 
@@ -52,7 +54,7 @@ class OrderService:
 
     
     def reserve_product(self, product_id: int):
-        reservation = patch(f"http://localhost:8003/products/reserve/{product_id}")
+        reservation = patch(f"http://{self.connection_config.app_host}:8003/products/reserve/{product_id}")
 
         if reservation.status_code != 201:
             raise HTTPException(status_code=reservation.status_code, detail=reservation.json()["detail"])
@@ -60,7 +62,7 @@ class OrderService:
 
 
     def __validate_merchant(self, order: OrderModel):
-        merchant = get(f"http://localhost:8001/merchants/{order.merchantId}")
+        merchant = get(f"http://{self.connection_config.app_host}:8001/merchants/{order.merchantId}")
         merchant_content = merchant.json()
         if merchant.status_code == 404:
             raise HTTPException(status_code=400, detail="Merchant does not exist")
@@ -71,7 +73,7 @@ class OrderService:
 
 
     def __validate_buyer(self, order: OrderModel):
-        buyer = get(f"http://localhost:8002/buyers/{order.buyerId}")
+        buyer = get(f"http://{self.connection_config.app_host}:8002/buyers/{order.buyerId}")
         buyer_content = buyer.json()
         if buyer.status_code == 404:
             raise HTTPException(status_code=400, detail="Buyer does not exist")
@@ -82,7 +84,7 @@ class OrderService:
     
 
     def __validate_product(self, order: OrderModel, merchant: MerchantModel):
-        product = get(f"http://localhost:8003/products/{order.productId}")
+        product = get(f"http://{self.connection_config.app_host}:8003/products/{order.productId}")
         if product.status_code == 404:
             raise HTTPException(status_code=400, detail="Product does not exist")
         
