@@ -25,11 +25,7 @@ class OrderReceiver:
         is_valid = self.validate(info["orderModel"]["creditCard"])
         event: PaymentModel = self.order_converter.to_payment_response(info, is_valid)
         self.payment_sender.send_message(event)
-        async def send_to_db(event):
-            doc = await self.payment_repo.post_payment(event)
-            payment = await self.payment_repo.fetch_payment(event["order_id"])
-            print(f"Payment {payment} succsessfully stored")
-        send_to_db(event)
+        self.send_to_db(event)
     
     async def send_to_db(self, event):
         doc = await self.payment_repo.post_payment(event)
@@ -57,8 +53,8 @@ class OrderReceiver:
         return [int(i) for i in str(cc_number)]
     
     def __luhn_checksum(self, card_number):
-        odd_digits = card_number[::2]
-        even_digits = card_number[1::2]
+        odd_digits = card_number[-1::-2]
+        even_digits = card_number[-2::-2]
         checksum = 0
         checksum += sum(odd_digits)
         for i in even_digits:
