@@ -150,18 +150,18 @@ services:
 
 
 
-  inventory_service:
-    platform: linux/amd64
-    build: ./InventoryService
-    image: inventory_service:0.0
-    container_name: inventory_service
+  # inventory_service:
+  #   platform: linux/amd64
+  #   build: ./InventoryService
+  #   image: inventory_service:0.0
+  #   container_name: inventory_service
 
-    ports:
-      - 8003:8003
+  #   ports:
+  #     - 8003:8003
 
-    depends_on:
-      - inventory_db
-      - rabbitmq3
+  #   depends_on:
+  #     - inventory_db
+  #     - rabbitmq3
 
 
 
