@@ -25,9 +25,9 @@ class OrderReceiver:
         is_valid = self.validate(info["orderModel"]["creditCard"])
         event: PaymentModel = self.order_converter.to_payment_response(info, is_valid)
         self.payment_sender.send_message(event)
-        requests.post("http://localhost:8004/payments", data=event.json())
+        requests.post("http://host.docker.internal:8004/payments", data=event.json())
         order_id = info["id"]
-        payment = requests.get(f"http://localhost:8004/payments/{order_id}")
+        payment = requests.get(f"http://host.docker.internal:8004/payments/{order_id}")
         print(f"Payment {payment.text} succsessfully stored")
         #self.send_to_db(event)
     
@@ -65,10 +65,12 @@ class OrderReceiver:
             checksum += sum(self.__get_digits(i*2))
         return checksum % 10
     
-    def __validate_card_number(self, card_number):
-        card_number = self.__get_digits(card_number)
-        is_valid = self.__luhn_checksum(card_number)
-        return is_valid == 0
+    def __validate_card_number(self, card_number: str):
+        if card_number.isdigit():
+            card_number = self.__get_digits(card_number)
+            is_valid = self.__luhn_checksum(card_number)
+            return is_valid == 0
+        return False
     
     def __validate_month(self, month):
         if month > 0 and month < 13:
