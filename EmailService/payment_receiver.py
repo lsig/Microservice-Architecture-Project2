@@ -31,5 +31,6 @@ class PaymentEmailSender:
         
 
     def consume(self):
+        self.channel.basic_qos(prefetch_count=1)
         self.channel.basic_consume(queue=self.queue_name, on_message_callback=self.callback, auto_ack=True)
         self.channel.start_consuming()
