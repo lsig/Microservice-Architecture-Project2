@@ -25,6 +25,10 @@ class OrderReceiver:
         is_valid = self.validate(info["orderModel"]["creditCard"])
         event: PaymentModel = self.order_converter.to_payment_response(info, is_valid)
         self.payment_sender.send_message(event)
+        requests.post("http://localhost:8004/payments", data=event.json())
+        order_id = info["id"]
+        payment = requests.get(f"http://localhost:8004/payments/{order_id}")
+        print(f"Payment {payment.text} succsessfully stored")
         #self.send_to_db(event)
     
     async def send_to_db(self, event):

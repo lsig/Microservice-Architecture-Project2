@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from infrastructure.container import Container
 from infrastructure.settings import Settings
 import endpoints
+import threading
 
 
 def create_app(container: Container) -> FastAPI:
@@ -20,7 +21,10 @@ app = create_app(container)
 receiver = container.order_receiver_provider()
 
 
+
 if __name__ == '__main__':
+    start_receiving = threading.Thread(target=receiver.consume)
+    start_receiving.start()
     uvicorn.run('main:app', host='0.0.0.0', port=8004, reload=True)
-    print("Waiting for ...")
-    receiver.consume()
+    #print("Waiting for ...")
+    #receiver.consume()
