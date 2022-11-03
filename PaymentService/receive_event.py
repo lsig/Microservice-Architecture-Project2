@@ -25,7 +25,7 @@ class OrderReceiver:
         is_valid = self.validate(info["orderModel"]["creditCard"])
         event: PaymentModel = self.order_converter.to_payment_response(info, is_valid)
         self.payment_sender.send_message(event)
-        self.send_to_db(event)
+        #self.send_to_db(event)
     
     async def send_to_db(self, event):
         doc = await self.payment_repo.post_payment(event)
