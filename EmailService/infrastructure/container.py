@@ -5,6 +5,7 @@ from connections.rabbit_connection import RabbitMQConnection
 from infrastructure.settings import Settings
 from order_receiver import OrderEmailSender
 from payment_receiver import PaymentEmailSender
+from receiver import Sender
 
 class Container(containers.DeclarativeContainer):
     config: Settings = providers.Configuration()
@@ -26,6 +27,12 @@ class Container(containers.DeclarativeContainer):
     rb_connection = providers.Singleton(
         RabbitMQConnection,
         rabbit_config=rb_config
+    )
+
+    receiver_provider = providers.Singleton(
+        Sender,
+        connection=rb_connection,
+        emailConfig=email_info
     )
 
     order_receiver_provider = providers.Factory(
