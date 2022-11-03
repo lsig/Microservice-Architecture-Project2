@@ -26,7 +26,7 @@ class Sender:
 
     
     def callback2(self, ch, method, properties, body):
-        print("received event")
+        print("Payment event received")
         order = json.loads(body)
         order_id = order["order_id"]
         success = order["payment_succsess"]

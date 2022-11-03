@@ -3,8 +3,6 @@ from connections.email_config import EmailConfig
 from connections.rabbit_config import RabbitConfig
 from connections.rabbit_connection import RabbitMQConnection
 from infrastructure.settings import Settings
-from order_receiver import OrderEmailSender
-from payment_receiver import PaymentEmailSender
 from receiver import Sender
 
 class Container(containers.DeclarativeContainer):
@@ -31,18 +29,6 @@ class Container(containers.DeclarativeContainer):
 
     receiver_provider = providers.Singleton(
         Sender,
-        connection=rb_connection,
-        emailConfig=email_info
-    )
-
-    order_receiver_provider = providers.Factory(
-        OrderEmailSender,
-        connection=rb_connection,
-        emailConfig=email_info
-    )
-
-    payment_receiver_provider = providers.Factory(
-        PaymentEmailSender,
         connection=rb_connection,
         emailConfig=email_info
     )
