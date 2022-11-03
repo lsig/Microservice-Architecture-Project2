@@ -108,17 +108,18 @@ services:
 
 
 
-  # order_service:
-  #   platform: linux/amd64
-  #   build: ./OrderService
-  #   image: order_service:0.0
-  #   container_name: order_service
+  order_service:
+    platform: linux/amd64
+    build: ./OrderService
+    image: order_service:0.0
+    container_name: order_service
 
-  #   ports:
-  #     - 8000:8000
+    ports:
+      - 8000:8000
 
-  #   depends_on:
-  #     - order_db
+    depends_on:
+      - order_db
+      - rabbitmq3
 
 
   merchant_service:
@@ -131,6 +132,7 @@ services:
 
     depends_on:
       - merchant_db
+      - rabbitmq3
 
 
 
@@ -144,6 +146,7 @@ services:
 
     depends_on:
       - buyer_db
+      - rabbitmq3
 
 
 
@@ -158,6 +161,7 @@ services:
 
     depends_on:
       - inventory_db
+      - rabbitmq3
 
 
 
@@ -172,6 +176,7 @@ services:
 
     depends_on:
       - payment_db
+      - rabbitmq3
 
 
 volumes:
