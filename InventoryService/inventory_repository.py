@@ -44,3 +44,23 @@ class InventoryRepository:
         ''')
 
         self.__connection.commit()
+
+
+
+        
+    def remove_product(self, id: int):
+        self.__connection.execute(f'''
+        UPDATE products SET reserved = reserved - 1, quantity = quantity - 1 WHERE id = {id}
+        ''')
+
+        self.__connection.commit()
+        
+
+
+    def remove_reservation(self, id: int):
+        self.__connection.execute(f'''
+        UPDATE products SET reserved = reserved - 1 WHERE id = {id}
+        ''')
+
+        self.__connection.commit()
+

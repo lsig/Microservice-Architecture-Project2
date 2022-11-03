@@ -1,29 +1,31 @@
 version: "3.8"
   
 services:
-  db:
+  order_db:
     platform: linux/amd64
     image: postgres:15.0
-    container_name: postgres_0.11
+    container_name: order_db
     restart: always
+
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=orders_db
+      - POSTGRES_PASSWORD=order
+      - POSTGRES_USER=order
+      - POSTGRES_DB=order
+    
+    ports:
+      - 5432:5432
 
     volumes: 
       - order_volume:/var/lib/postgresql/data
-    ports:
-      - 5432:5432
     
 
-  order_api:
-    platform: linux/amd64
-    build: .
-    image: order_api:0.0.0
-    restart: always
-    ports:
-      - 8000:8000
+  # order_api:
+  #   platform: linux/amd64
+  #   build: .
+  #   image: order_api:0.0.0
+  #   restart: always
+  #   ports:
+  #     - 8000:8000
     
 
 volumes:
