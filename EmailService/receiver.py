@@ -10,24 +10,18 @@ class Sender:
         self.channel = self.connection.channel()
         self.declare_order_exchange()
         self.declare_payment_exchange()
-<<<<<<< HEAD
-=======
-        
->>>>>>> aa5f19ea56d032d3264a31f28c416985bfd352d3
     
     def callback1(self, ch, method, properties, body):
         print("Order received")
         order = json.loads(body)
         product_model = order["productModel"]
         order_id = order["id"]
-        order_name = product_model["productName"] #TODO we need productName (get this in orderService/service - validate())
-        order_price = product_model["totalPrice"]
+        order_name = product_model["productName"]
+        order_price = product_model["price"]
         contents = [
             f"Order ID: {order_id}\nProduct name: {order_name}\nPrice: {order_price}"
         ]
         self.email.send(to="project2.honnun@gmail.com", subject="Order has been created", contents=contents)
-        ch.basic_ack(delivery_tag=method.delivery_tag)
-
     
     def callback2(self, ch, method, properties, body):
         print("Payment event received")
@@ -46,35 +40,24 @@ class Sender:
             ]
 
         self.email.send(to="project2.honnun@gmail.com", subject=subject, contents=contents)
-        ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def declare_order_exchange(self):
         self.channel.exchange_declare(exchange="order_created", exchange_type="fanout")
-<<<<<<< HEAD
         self.channel.queue_declare(queue="order_queue")
         self.queue_name1 = "order_queue"
-=======
-        result = self.channel.queue_declare(queue='', durable=True)
-        self.queue_name1 = result.method.queue
->>>>>>> aa5f19ea56d032d3264a31f28c416985bfd352d3
         self.channel.queue_bind(exchange="order_created", queue=self.queue_name1)
     
     def declare_payment_exchange(self):
         self.channel.exchange_declare(exchange="payment", exchange_type="fanout")
-<<<<<<< HEAD
         self.channel.queue_declare(queue="payment_queue")
         self.queue_name2 = "payment_queue"
-=======
-        result = self.channel.queue_declare(queue='', durable=True)
-        self.queue_name2 = result.method.queue
->>>>>>> aa5f19ea56d032d3264a31f28c416985bfd352d3
         self.channel.queue_bind(exchange="payment", queue=self.queue_name2)
     
     def consume_order(self):
-        self.channel.basic_consume(queue=self.queue_name1, on_message_callback=self.callback1)
+        self.channel.basic_consume(queue=self.queue_name1, on_message_callback=self.callback1, auto_ack=True)
     
     def consume_payment(self):
-        self.channel.basic_consume(queue=self.queue_name2, on_message_callback=self.callback2)
+        self.channel.basic_consume(queue=self.queue_name2, on_message_callback=self.callback2, auto_ack=True)
     
     def consume(self):
         self.channel.basic_qos(prefetch_count=1)
