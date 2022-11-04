@@ -1,3 +1,4 @@
+import pika
 from models.order_event_model import OrderEventModel
 from db_connection.rb_connection import RabbitMQConnection
 
@@ -12,4 +13,10 @@ class EventSender:
         return channel
 
     def send_order_created_event(self, order: OrderEventModel):
-        self.channel.basic_publish(exchange='order_created', routing_key='', body=order.json())
+        self.channel.basic_publish(exchange='order_created', 
+                                    routing_key='', 
+                                    body=order.json(),
+                                    properties=pika.BasicProperties(
+                                    delivery_mode=pika.spec.PERSISTENT_DELIVERY_MODE
+                                    )
+                                )

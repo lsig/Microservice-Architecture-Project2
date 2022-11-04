@@ -155,9 +155,19 @@ services:
     build: ./InventoryService
     image: inventory_service:0.0
     container_name: inventory_service
+<<<<<<< HEAD
 
     ports:
       - 8003:8003
+=======
+
+    ports:
+      - 8003:8003
+
+    depends_on:
+      - inventory_db
+      - rabbitmq3
+>>>>>>> aa5f19ea56d032d3264a31f28c416985bfd352d3
 
     depends_on:
       - inventory_db
@@ -180,6 +190,18 @@ services:
     image: email_sevice:0.0
     deploy:
       replicas: 2
+
+
+  email_service:
+    build: ./EmailService
+    image: email_service:0.0
+    #container_name: email_service
+    deploy:
+      mode: replicated
+      replicas: 2
+
+    depends_on:
+      - rabbitmq3
 
 
 volumes:
