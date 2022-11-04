@@ -10,7 +10,6 @@ class Sender:
         self.channel = self.connection.channel()
         self.declare_order_exchange()
         self.declare_payment_exchange()
-        self.channel.basic_qos(prefetch_count=1)
     
     def callback1(self, ch, method, properties, body):
         print("Order received")
@@ -43,14 +42,14 @@ class Sender:
 
     def declare_order_exchange(self):
         self.channel.exchange_declare(exchange="order_created", exchange_type="fanout")
-        result = self.channel.queue_declare(queue='')
-        self.queue_name1 = result.method.queue
+        self.channel.queue_declare(queue="order_queue")
+        self.queue_name1 = "order_queue"
         self.channel.queue_bind(exchange="order_created", queue=self.queue_name1)
     
     def declare_payment_exchange(self):
         self.channel.exchange_declare(exchange="payment", exchange_type="fanout")
-        result = self.channel.queue_declare(queue='')
-        self.queue_name2 = result.method.queue
+        self.channel.queue_declare(queue="payment_queue")
+        self.queue_name2 = "payment_queue"
         self.channel.queue_bind(exchange="payment", queue=self.queue_name2)
     
     def consume_order(self):
@@ -60,6 +59,7 @@ class Sender:
         self.channel.basic_consume(queue=self.queue_name2, on_message_callback=self.callback2, auto_ack=True)
     
     def consume(self):
+        self.channel.basic_qos(prefetch_count=1)
         self.consume_order()
         self.consume_payment()
         self.channel.start_consuming()
