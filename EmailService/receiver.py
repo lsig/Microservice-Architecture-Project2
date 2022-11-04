@@ -15,10 +15,10 @@ class Sender:
     def callback1(self, ch, method, properties, body):
         print("Order received")
         order = json.loads(body)
-        order_model = order["orderModel"]
+        product_model = order["productModel"]
         order_id = order["id"]
-        order_name = order_model["productId"] #TODO we need productName (get this in orderService/service - validate())
-        order_price = 100#order_model["totalPrice"]
+        order_name = product_model["productName"] #TODO we need productName (get this in orderService/service - validate())
+        order_price = product_model["totalPrice"]
         contents = [
             f"Order ID: {order_id}\nProduct name: {order_name}\nPrice: {order_price}"
         ]
