@@ -27,9 +27,9 @@ class OrderReceiver:
         event: PaymentModel = self.order_converter.to_payment_response(info, is_valid)
         self.payment_sender.send_message(event)
         ch.basic_ack(delivery_tag=method.delivery_tag)
-        requests.post("http://host.docker.internal:8004/payments", data=event.json())
+        requests.post("http://localhost:8004/payments", data=event.json())
         order_id = info["id"]
-        payment = requests.get(f"http://host.docker.internal:8004/payments/{order_id}")
+        payment = requests.get(f"http://localhost:8004/payments/{order_id}")
         print(f"Payment {payment.text} succsessfully stored")
 
 
