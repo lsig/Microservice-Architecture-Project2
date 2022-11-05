@@ -8,6 +8,7 @@ from events.rabbitmq_connection import RabbitmqConnection
 from infrastructure.settings import Settings
 from inventory_repository import InventoryRepository
 from inventory_service import InventoryService
+from infrastructure.connection_config import ConnectionConfig
 
 
 
@@ -24,6 +25,13 @@ class Container(containers.DeclarativeContainer):
         port=config.db_port
     )
 
+    connection_config_provide = providers.Singleton(
+        ConnectionConfig,
+        server_ip=config.server_ip,
+        this_port=config.this_port,
+        merchant_service_port=config.merchant_service_port
+    )
+
     db_connection_provide = providers.Singleton(
         PostgresDbConnection,
         db_config=db_config_provide
@@ -36,7 +44,8 @@ class Container(containers.DeclarativeContainer):
 
     inventory_service_provide = providers.Singleton(
         InventoryService,
-        inventory_repository=inventory_repository_provide
+        inventory_repository=inventory_repository_provide,
+        connection_config=connection_config_provide
     )
 
     
@@ -56,7 +65,7 @@ class Container(containers.DeclarativeContainer):
 
     event_receiver_provide = providers.Factory(
         EventReceiver,
-        event_connection=rabbitmq_connection_provide
+        event_connection=rabbitmq_connection_provide,
+        connection_config=connection_config_provide
     )
-
 

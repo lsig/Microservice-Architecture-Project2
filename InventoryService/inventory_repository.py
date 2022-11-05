@@ -19,13 +19,6 @@ class InventoryRepository:
         return product
 
 
-    def get_all_products_by_merchant_id(self, merchant_id: int):
-        products = self.__connection.execute(f'''
-        SELECT * FROM products WHERE merchantid = {merchant_id}
-        ''')
-
-        return products
-
 
     def save_product(self, product: ProductModel):
         id = self.__connection.execute(f'''
@@ -36,6 +29,7 @@ class InventoryRepository:
 
         self.__connection.commit()
         return id
+
 
 
     def reserve_product(self, id: int, reserved: int):

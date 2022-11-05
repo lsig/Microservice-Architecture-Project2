@@ -2,10 +2,12 @@ from json import loads
 from requests import patch
 
 from events.rabbitmq_connection import RabbitmqConnection
+from infrastructure.connection_config import ConnectionConfig
 
 class EventReceiver:
-    def __init__(self, event_connection: RabbitmqConnection) -> None:
+    def __init__(self, event_connection: RabbitmqConnection, connection_config: ConnectionConfig) -> None:
         self.connection = event_connection.connection
+        self.server = connection_config
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange="payment", exchange_type="fanout")
         result = self.channel.queue_declare(queue='')
@@ -18,11 +20,8 @@ class EventReceiver:
     def callback(self, ch, method, properties, body):
         print("Processing...")
         event_info = loads(body)
-        response = patch(f"http://host.docker.internal:8003/products/process_payment", json=event_info)
+        response = patch(f"http://{self.server.server_ip}:{self.server.this_port}/products/process_payment", json=event_info)
         return response
-
-
-
 
 
     def consume(self):
