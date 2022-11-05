@@ -29,7 +29,7 @@ class Container(containers.DeclarativeContainer):
         ConnectionConfig,
         server_ip=config.server_ip,
         this_port=config.this_port,
-        merchant_service_port=config.merchant_service_port
+        merchant_service_container=config.merchant_service_container
     )
 
     db_connection_provide = providers.Singleton(

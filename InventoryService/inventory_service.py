@@ -60,7 +60,8 @@ class InventoryService:
         self.__validate_quantity(product.quantity)
 
     def __validate_merchant(self, merchant_id: int):
-        merchant = get(f"http://{self.server.server_ip}:{self.server.merchant_service_port}/merchants/{merchant_id}")
+        print(f"using {self.server.merchant_service_container}")
+        merchant = get(f"http://{self.server.merchant_service_container}/merchants/{merchant_id}")
 
         if merchant.status_code == 404:
             raise HTTPException(status_code=400, detail=merchant.json()["detail"])

@@ -55,9 +55,9 @@ class Container(containers.DeclarativeContainer):
     connection_config_provide = providers.Singleton(
         ConnectionConfig,
         server_ip=config.server_ip,
-        merchant_service_port=config.merchant_service_port,
-        buyer_service_port=config.buyer_service_port,
-        inventory_service_port=config.inventory_service_port
+        merchant_service_container=config.merchant_service_container,
+        buyer_service_container=config.buyer_service_container,
+        inventory_service_container=config.inventory_service_container
     )
 
     order_service_provider = providers.Singleton(

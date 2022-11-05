@@ -67,7 +67,7 @@ class OrderService:
 
     
     def reserve_product(self, product_id: int):
-        reservation = patch(f"http://{self.server.server_ip}:{self.server.inventory_service_port}/products/reserve/{product_id}")
+        reservation = patch(f"http://{self.server.inventory_service_container}/products/reserve/{product_id}")
 
         if reservation.status_code != 201:
             raise HTTPException(status_code=reservation.status_code, detail=reservation.json()["detail"])
@@ -76,7 +76,7 @@ class OrderService:
 
 
     def get_merchant(self, order: OrderModel):
-        merchant_response = get(f"http://{self.server.server_ip}:{self.server.merchant_service_port}/merchants/{order.merchantId}")
+        merchant_response = get(f"http://{self.server.merchant_service_container}/merchants/{order.merchantId}")
         return self.__validate_merchant(merchant_response, order.merchantId)
 
 
@@ -90,7 +90,7 @@ class OrderService:
 
 
     def get_buyer(self, order: OrderModel):
-        buyer_response = get(f"http://{self.server.server_ip}:{self.server.buyer_service_port}/buyers/{order.buyerId}")
+        buyer_response = get(f"http://{self.server.buyer_service_container}/buyers/{order.buyerId}")
         return self.__validate_buyer(buyer_response, order.buyerId)
 
 
@@ -104,7 +104,7 @@ class OrderService:
 
 
     def get_product(self, order: OrderModel, merchant: MerchantModel):
-        product_response = get(f"http://{self.server.server_ip}:{self.server.inventory_service_port}/products/{order.productId}")
+        product_response = get(f"http://{self.server.inventory_service_container}/products/{order.productId}")
         return self.__validate_product(product_response, order.productId, order, merchant)
 
 

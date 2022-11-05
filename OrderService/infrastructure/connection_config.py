@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 class ConnectionConfig(BaseModel):
     server_ip: str
-    merchant_service_port: int
-    buyer_service_port: int
-    inventory_service_port: int
+    merchant_service_container: str
+    buyer_service_container: str
+    inventory_service_container: str
     
