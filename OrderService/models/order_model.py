@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Union
 
 from models.credit_card_model import CreditCardModel
 
@@ -7,5 +8,5 @@ class OrderModel(BaseModel):
     merchantId: int
     buyerId: int
     creditCard: CreditCardModel
-    discount: float
+    discount: Union[float, None]
 

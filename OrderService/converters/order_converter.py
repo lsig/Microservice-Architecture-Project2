@@ -31,30 +31,30 @@ class OrderConverter:
 
 
 
-    def to_merchant_model(self, merchant):
+    def to_merchant_model(self, merchant, merchantId: int):
         return MerchantModel(
-            id = merchant['_id'],
+            id = merchantId,
             name = merchant['name'],
             ssn = merchant['ssn'],
             email = merchant['email'],
-            phone_number = merchant['phone_number'],
-            allows_discount = merchant['allows_discount']
+            phoneNumber = merchant['phoneNumber'],
+            allowsDiscount = merchant['allowsDiscount']
         )
 
 
-    def to_buyer_model(self, buyer):
+    def to_buyer_model(self, buyer, buyerId: int):
         return BuyerModel(
-            id = buyer['_id'],
+            id = buyerId,
             name = buyer['name'],
             ssn = buyer['ssn'],
             email = buyer['email'],
-            phone_number = buyer['phone_number']
+            phoneNumber = buyer['phoneNumber']
         )
         
     
-    def to_product_model(self, product):
+    def to_product_model(self, product, productId: int):
         return ProductModel(
-            id = product['id'],
+            id = productId,
             merchantId = product['merchantId'],
             productName = product['productName'],
             price = product['price'],
