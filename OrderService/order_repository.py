@@ -3,6 +3,7 @@
 
 from db_connection.postgres_db_connection import PostgresDbConnection
 from models.order_model import OrderModel
+from models.outside_models.product_model import ProductModel
 
 
 class OrderRepository:
@@ -18,11 +19,11 @@ class OrderRepository:
         return order
     
 
-    def save_order(self, order: OrderModel):
+    def save_order(self, order: OrderModel, product: ProductModel):
 
         id = self.__connection.execute(f'''
             INSERT INTO orders(productid, buyerid, cardnumber, totalprice) 
-            VALUES ('{order.productId}', '{order.buyerId}', '{order.creditCard.cardNumber}', '100')
+            VALUES ('{order.productId}', '{order.buyerId}', '{order.creditCard.cardNumber}', '{product.price}')
             RETURNING id;
             ''')
 
