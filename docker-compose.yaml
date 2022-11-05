@@ -9,12 +9,6 @@ services:
         - RABBITMQ_DEFAULT_USER=myuser
         - RABBITMQ_DEFAULT_PASS=mypassword
 
-    ports:
-        # AMQP protocol port
-        - 5672:5672
-        # HTTP management UI
-        - 15672:15672
-
 
   order_db:
     platform: linux/amd64
@@ -26,9 +20,6 @@ services:
       - POSTGRES_PASSWORD=order
       - POSTGRES_USER=order
       - POSTGRES_DB=order
-    
-    ports:
-      - 5432:5432
 
     volumes: 
       - order_volume:/var/lib/postgresql/data
@@ -46,9 +37,6 @@ services:
       - POSTGRES_USER=inventory
       - POSTGRES_DB=inventory
 
-    ports:
-      - 5433:5432
-
     volumes:
       - inventory_volume:/var/lib/postgresql/data
 
@@ -61,9 +49,6 @@ services:
     environment:
         MONGO_INITDB_ROOT_USERNAME: root
         MONGO_INITDB_ROOT_PASSWORD: rootpassword
-
-    ports:
-        - 27018:27017
 
     volumes:
         - buyer_volume:/data/db
@@ -92,9 +77,6 @@ services:
         MONGO_INITDB_ROOT_USERNAME: root
         MONGO_INITDB_ROOT_PASSWORD: rootpassword
 
-    ports:
-        - 27019:27017
-
     volumes:
         - payment_volume:/data/db
 
@@ -110,9 +92,6 @@ services:
     build: ./OrderService
     image: order_service:0.0
     container_name: order_service
-
-    ports:
-      - 8000:8000
 
     depends_on:
       - order_db
@@ -165,11 +144,28 @@ services:
     
   email_service:
     build: ./EmailService
-    image: email_sevice:0.0
+    image: email_service:0.0
     deploy:
       replicas: 2
     depends_on:
       - rabbitmq3
+
+
+####
+
+  api_layer:
+    build: ./ApiLayer
+    image: api_layer:0.0
+    container_name: api_layer
+
+    ports:
+      - "8000:8000"
+
+    depends_on:
+      - order_service
+      - buyer_service
+      - inventory_service
+      - merchant_service
 
 
 volumes:
