@@ -24,19 +24,20 @@ class InventoryService:
             raise HTTPException(status_code=404, detail="Product does not exist")
 
         product_response: ProductResponseModel = self.inventory_converter.to_product_response(product[0])
-
         return product_response
 
 
+
     def save_products(self, product: ProductModel):
-        self.validate_merchant(product.merchantId)
-        return self.inventory_repository.save_product(product)
+        self.validate_request(product)
+        return self.inventory_repository.save_product(product)[0][0] #the sql query returns a list of products (only one product though), of which we want the first (and only) product. inside that product we want the first element (the id)
+
 
 
     def reserve_product(self, id: int):
         reserved: int = self.get_product_reserved_count(id)
-
         return self.inventory_repository.reserve_product(id, reserved)
+
 
 
 
@@ -53,11 +54,24 @@ class InventoryService:
 ####
 
 
-    def validate_merchant(self, merchant_id: int):
+    def validate_request(self, product: ProductModel):
+        self.__validate_merchant(product.merchantId)
+        self.__validate_price(product.price)
+        self.__validate_quantity(product.quantity)
+
+    def __validate_merchant(self, merchant_id: int):
         merchant = get(f"http://{self.server.server_ip}:{self.server.merchant_service_port}/merchants/{merchant_id}")
 
         if merchant.status_code == 404:
             raise HTTPException(status_code=400, detail=merchant.json()["detail"])
+
+    def __validate_price(self, price: int):
+        if price <= 0:
+            raise HTTPException(status_code=400, detail="price must be a positive integer")
+    
+    def __validate_quantity(self, quantity: int):
+        if quantity <= 0:
+            raise HTTPException(status_code=400, detail="quantity must be a positive integer")
 
 
 
@@ -69,5 +83,3 @@ class InventoryService:
             raise HTTPException(status_code=400, detail="Product is sold out")
 
         return product.reserved
-
-
