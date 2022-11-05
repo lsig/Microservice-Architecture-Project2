@@ -8,7 +8,7 @@ from merchant_repository import MerchantRepository
 
 router = APIRouter()
 
-@router.get('/merchants/{id}', status_code=200, response_model=MerchantModel)
+@router.get('/merchants/{id}', status_code=200)
 @inject
 async def get_merchant(id: int, merchant_repository: MerchantRepository = Depends(
     Provide[Container.merchant_repository_provider])):
