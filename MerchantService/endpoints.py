@@ -5,7 +5,6 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from dependency_injector.wiring import inject, Provide
 from merchant_repository import MerchantRepository
-from converters.merchant_converter import MerchantConverter
 
 router = APIRouter()
 
@@ -15,7 +14,7 @@ async def get_merchant(id: int, merchant_repository: MerchantRepository = Depend
     Provide[Container.merchant_repository_provider])):
     merchant = await merchant_repository.fetch_merchant(id)
     if merchant:
-        return MerchantConverter().to_merchant_response(merchant)
+        return merchant
         
     raise HTTPException(status_code=404, detail=f"There is no merchant with id: {id}")
 
