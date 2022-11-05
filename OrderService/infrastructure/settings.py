@@ -2,7 +2,7 @@ from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
-    app_host: str
+    server_ip: str
 
     db_host: str
     db_database: str

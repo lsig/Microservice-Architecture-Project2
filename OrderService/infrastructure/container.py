@@ -54,7 +54,7 @@ class Container(containers.DeclarativeContainer):
 
     connection_config_provide = providers.Singleton(
         ConnectionConfig,
-        app_host=config.app_host
+        server_ip=config.server_ip
     )
 
     order_service_provider = providers.Singleton(
