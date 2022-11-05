@@ -18,6 +18,7 @@ class Container(containers.DeclarativeContainer):
     db_config_provider = providers.Singleton(
         DbConfig,
         host=config.db_host,
+        port=config.db_port,
         database=config.db_database,
         user=config.db_user,
         password=config.db_password
@@ -54,7 +55,6 @@ class Container(containers.DeclarativeContainer):
 
     connection_config_provide = providers.Singleton(
         ConnectionConfig,
-        server_ip=config.server_ip,
         merchant_service_container=config.merchant_service_container,
         buyer_service_container=config.buyer_service_container,
         inventory_service_container=config.inventory_service_container

@@ -2,12 +2,12 @@ from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
-    server_ip: str
     merchant_service_container: str
     buyer_service_container: str
     inventory_service_container: str
 
     db_host: str
+    db_port: str
     db_database: str
     db_user: str
     db_password: str
