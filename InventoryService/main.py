@@ -32,4 +32,4 @@ if __name__ == "__main__":
     event_thread = threading.Thread(target=event_receiver.consume)
     event_thread.start()
 
-    uvicorn.run("main:app", host=settings.app_host, port=8003, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8003, reload=True)

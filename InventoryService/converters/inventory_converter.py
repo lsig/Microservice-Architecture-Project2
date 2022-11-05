@@ -14,11 +14,3 @@ class InventoryConverter:
             quantity = product[4],
             reserved = product[5]
         )
-
-
-    def to_product_list_response(self, products) -> List[ProductResponseModel]:
-        product_list_response = []
-        for product in products:
-            product_list_response.append(product)
-
-        return product_list_response
