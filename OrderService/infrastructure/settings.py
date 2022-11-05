@@ -3,6 +3,9 @@ from pydantic import BaseSettings
 
 class Settings(BaseSettings):
     server_ip: str
+    merchant_service_port: int
+    buyer_service_port: int
+    inventory_service_port: int
 
     db_host: str
     db_database: str
