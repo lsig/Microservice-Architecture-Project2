@@ -2,7 +2,6 @@ from json import loads
 from requests import patch
 
 from events.rabbitmq_connection import RabbitmqConnection
-from inventory_service import InventoryService
 
 class EventReceiver:
     def __init__(self, event_connection: RabbitmqConnection) -> None:
@@ -17,9 +16,9 @@ class EventReceiver:
 
 
     def callback(self, ch, method, properties, body):
+        print("Processing...")
         event_info = loads(body)
-        response = patch(f"http://localhost:8003/products/process_payment", json=event_info)
-
+        response = patch(f"http://host.docker.internal:8003/products/process_payment", json=event_info)
         return response
 
 
@@ -27,4 +26,5 @@ class EventReceiver:
 
 
     def consume(self):
+        print("Waiting...")
         self.channel.start_consuming()
