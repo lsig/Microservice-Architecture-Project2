@@ -6,7 +6,7 @@ class MerchantRepository:
         self.__collection = connection.collection
     
     async def fetch_merchant(self, id: int): 
-        document = await self.__collection.find_one({"_id":id})
+        document = await self.__collection.find_one({"_id":id}, {"_id": 0})
         return document
     
     async def post_merchant(self, merchant: dict):

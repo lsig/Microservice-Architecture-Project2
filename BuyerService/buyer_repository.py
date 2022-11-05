@@ -6,7 +6,7 @@ class BuyerRepository:
         self.__collection = connection.collection
     
     async def fetch_buyer(self, id: str): 
-        document = await self.__collection.find_one({"_id":id})
+        document = await self.__collection.find_one({"_id":id}, {"_id": 0})
         return document
     
     async def post_buyer(self, buyer: dict):

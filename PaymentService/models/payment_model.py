@@ -18,9 +18,9 @@ class PyObjectId(ObjectId):
 
 class PaymentModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    order_id: int 
-    product_id: int
-    payment_succsess: bool
+    orderId: int 
+    productId: int
+    paymentSuccess: bool
 
 
     class Config:
@@ -29,8 +29,8 @@ class PaymentModel(BaseModel):
         json_encoders = {ObjectId: str}
         schema_extra = {
             "example": {
-                "order_id": 35,
-                "product_id": 12,
-                "payment_succsess": True
+                "orderId": 35,
+                "productId": 12,
+                "paymentSuccess": True
             }
         }

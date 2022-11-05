@@ -5,7 +5,7 @@ class PaymentRepository:
         self.__collection = connection.collection
     
     async def fetch_payment(self, id: int): 
-        document = await self.__collection.find_one({"order_id":id})
+        document = await self.__collection.find_one({"orderId":id})
         return document
     
     async def post_payment(self, payment: dict):

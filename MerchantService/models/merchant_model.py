@@ -22,8 +22,8 @@ class MerchantModel(BaseModel):
     name: str
     ssn: str
     email: str
-    phone_number: str
-    allows_discount: bool
+    phoneNumber: str
+    allowsDiscount: bool
 
 
     class Config:
@@ -35,7 +35,7 @@ class MerchantModel(BaseModel):
                 "name": "Jane Doe",
                 "ssn": "4000000000",
                 "email": "jdoe@example.com",
-                "phone_number": "1234567",
-                "allows_discount": True,
+                "phoneNumber": "1234567",
+                "allowsDiscount": True,
             }
         }

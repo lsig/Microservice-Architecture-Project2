@@ -22,7 +22,7 @@ class BuyerModel(BaseModel):
     name: str
     ssn: str
     email: str
-    phone_number: str
+    phoneNumber: str
 
     class Config:
         allow_population_by_field_name = True
@@ -33,6 +33,6 @@ class BuyerModel(BaseModel):
                 "name": "Jane Doe",
                 "ssn": "4000000000",
                 "email": "jdoe@example.com",
-                "phone_number": "1234567",
+                "phoneNumber": "1234567",
             }
         }
