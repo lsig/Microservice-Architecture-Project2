@@ -10,7 +10,7 @@ class Container(containers.DeclarativeContainer):
 
     db_config = providers.Singleton(
         DbConfig,
-        host=config.mongodb_log_host,
+        address=config.mongodb_log_container,
         port=config.mongodb_log_port,
         user=config.mongodb_log_user,
         password=config.mongodb_log_password

@@ -1,7 +1,7 @@
 from pydantic import (BaseSettings)
 
 class Settings(BaseSettings):
-    mongodb_log_host: str
+    mongodb_log_container: str
     mongodb_log_port: int
     mongodb_log_user: str
     mongodb_log_password: str
