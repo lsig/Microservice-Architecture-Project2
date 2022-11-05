@@ -15,6 +15,10 @@ from event_sender import EventSender
 from infrastructure.connection_config import ConnectionConfig
 
 
+MAX_CARD_NUMBER_LEN = 19
+MIN_CARD_NUMBER_LEN = 8
+
+
 class OrderService:
     def __init__(self, order_repository: OrderRepository, event_sender: EventSender, connection_config: ConnectionConfig) -> None:
         self.order_repository = order_repository
@@ -38,6 +42,7 @@ class OrderService:
         merchant: MerchantModel = self.get_merchant(order)
         buyer: BuyerModel = self.get_buyer(order)
         product: ProductModel = self.get_product(order, merchant)
+
 
         self.reserve_product(order.productId)
 
@@ -113,6 +118,9 @@ class OrderService:
                 raise HTTPException(status_code=400, detail="Discount must be between 0 (inclusive) and 1 (exclusive)")
 
             product_model.price *= (1 - order.discount)
-        
+
+        if not (MIN_CARD_NUMBER_LEN <= len(order.creditCard.cardNumber) <= MAX_CARD_NUMBER_LEN):
+            raise HTTPException(status_code=400, detail=f"Credit card number must be between {MIN_CARD_NUMBER_LEN} and {MAX_CARD_NUMBER_LEN} (inclusive) characters")
+
         return product_model
         

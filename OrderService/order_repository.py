@@ -22,8 +22,8 @@ class OrderRepository:
     def save_order(self, order: OrderModel, product: ProductModel):
 
         id = self.__connection.execute(f'''
-            INSERT INTO orders(productid, buyerid, cardnumber, totalprice) 
-            VALUES ('{order.productId}', '{order.buyerId}', '{order.creditCard.cardNumber}', '{product.price}')
+            INSERT INTO orders(productid, merchantid, buyerid, cardnumber, totalprice) 
+            VALUES ('{order.productId}', '{order.merchantId}', '{order.buyerId}', '{order.creditCard.cardNumber}', '{product.price}')
             RETURNING id;
             ''')
 

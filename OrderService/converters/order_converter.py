@@ -10,13 +10,13 @@ from models.outside_models.merchant_model import MerchantModel
 from models.outside_models.product_model import ProductModel
 
 class OrderConverter:
-    def to_order_response(self, order: List[str]) -> OrderResponse:
+    def to_order_response(self, order: List) -> OrderResponse:
         return OrderResponse(
-            productId=order[0],
-            merchantId=order[1],
-            buyerId=order[2], 
-            cardNumber= "*" * 12 + order[3][-4:], #TODO check whether this makes sense
-            totalPrice=order[4]
+            productId=order[1],
+            merchantId=order[2],
+            buyerId=order[3], 
+            cardNumber= "*" * max((len(order[4]) - 4), 0) + order[4][-4:], 
+            totalPrice=order[5]
         )
 
 
