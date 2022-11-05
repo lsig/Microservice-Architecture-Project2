@@ -42,11 +42,11 @@ class InventoryService:
 
 
     def process_payment(self, payment: PaymentModel):
-        if payment.payment_succsess:
-            response = self.inventory_repository.remove_product(payment.product_id)
+        if payment.paymentSuccess:
+            response = self.inventory_repository.remove_product(payment.productId)
 
         else:
-            response = self.inventory_repository.remove_reservation(payment.product_id)
+            response = self.inventory_repository.remove_reservation(payment.productId)
 
         return response
 

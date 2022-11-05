@@ -27,8 +27,6 @@ class Container(containers.DeclarativeContainer):
 
     connection_config_provide = providers.Singleton(
         ConnectionConfig,
-        server_ip=config.server_ip,
-        this_port=config.this_port,
         merchant_service_container=config.merchant_service_container
     )
 

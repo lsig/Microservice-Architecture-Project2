@@ -20,7 +20,7 @@ class EventReceiver:
     def callback(self, ch, method, properties, body):
         print("Processing...")
         event_info = loads(body)
-        response = patch(f"http://{self.server.server_ip}:{self.server.this_port}/products/process_payment", json=event_info)
+        response = patch(f"http://localhost:8003/products/process_payment", json=event_info)
         return response
 
 
