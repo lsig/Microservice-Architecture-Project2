@@ -1,9 +1,5 @@
-
-
-
 from database.db_connection import DbConnection
 from models.product_model import ProductModel
-from models.product_response_model import ProductResponseModel
 
 
 class InventoryRepository:

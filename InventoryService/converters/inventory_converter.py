@@ -7,7 +7,6 @@ class InventoryConverter:
 
     def to_product_response(self, product) -> ProductResponseModel:
         return ProductResponseModel(
-            id = product[0],
             merchantId = product[1],
             productName = product[2],
             price = product[3],
